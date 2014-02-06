@@ -3,30 +3,25 @@ package com.moti.tellatale;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.UnknownServiceException;
 
 import android.os.AsyncTask;
 
-//TODO: status codes ?
-
 class HttpConnectionTask extends AsyncTask<String, Void, String>
 {
-	public static final int STATUS_XML_OK = 300;
-	public static final int STATUS_NO_STORY_AVAILABLE = 301;
-	public static final int STATUS_RESPONSE_OK = 302;
-	public static final int STATUS_SERVER_ERROR = 303;
-	public static final int STATUS_APP_ERROR = 304;
-	public static final int STATUS_ERROR_XML_PARSE = 305;
-	public static final int STATUS_ERROR_STRING_CONVERT = 306;
-	public static final int STATUS_ERROR_CREDENTIALS = 307;
-	public static final int STATUS_ERROR_TIMEOUT = 308;
+	public static final int STATUS_XML_OK = 1;
+	public static final int STATUS_NO_STORY_AVAILABLE = 2;
+	public static final int STATUS_RESPONSE_OK = 3;
+	public static final int STATUS_SERVER_ERROR = 4;
+	public static final int STATUS_ERROR_CREDENTIALS = 5;
+	public static final int STATUS_APP_ERROR = 6;
+	public static final int STATUS_ERROR_XML_PARSE = 7;
+	public static final int STATUS_ERROR_STRING_CONVERT = 8;
+	public static final int STATUS_ERROR_TIMEOUT = 9;
 	
 	private StoryActivity ParentActivity;
 	private int RequestStatus = STATUS_APP_ERROR;
@@ -37,21 +32,21 @@ class HttpConnectionTask extends AsyncTask<String, Void, String>
 	}
 
 	@Override
-	protected String  doInBackground(String... params)
+	protected String doInBackground(String... params)
 	{
 		// params comes from the execute() call: params[0] is the url params[1] is the output.
 		try
 		{
-			return sendRequest(params[0], params[1], params[2]);
+			return sendRequest(params[0], params[1]);
 		}
 		catch (SocketTimeoutException e)
 		{
 			RequestStatus = STATUS_ERROR_TIMEOUT;
-			return null;
+			return e.toString();
 		}
 		catch (IOException e)
 		{
-			return null;
+			return e.toString();
 		}
 	}
 	
@@ -60,55 +55,28 @@ class HttpConnectionTask extends AsyncTask<String, Void, String>
         ParentActivity.connectionFinished(RequestStatus, response);
     }
 
-	private String sendRequest(String serverUrl, String output, String type) throws IOException, SocketTimeoutException, MalformedURLException
+	private String sendRequest(String serverUrl, String output) throws IOException, SocketTimeoutException
 	{
 		InputStream inputStream = null;
 		HttpURLConnection conn = null;
 		
 		try
 		{
-			try{
-				URL url = new URL(serverUrl);
-				conn = (HttpURLConnection) url.openConnection();
-			} catch(MalformedURLException e){
-				RequestStatus = 1;
-				return null;
-			}
-			catch(IOException e){
-				RequestStatus = 2;
-				return null;
-			}
-			conn.setReadTimeout(35000 /* milliseconds */);
-	        conn.setConnectTimeout(10000 /* milliseconds */);
-			conn.setDoInput(true);
-			
+			URL url = new URL(serverUrl);
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setReadTimeout(30000 /* milliseconds */);
+			conn.setConnectTimeout(10000 /* milliseconds */);
+
 			if (output != null)
 			{
-				doOutput(conn, output, type);
-				if (RequestStatus != STATUS_APP_ERROR)
-					return null;
-			}
-
-			try{
-				inputStream = conn.getInputStream();
-			} catch(SocketTimeoutException e){
-				throw e;
-			} catch(UnknownServiceException e){
-				RequestStatus = 3;
-				return e.getMessage();
-			}catch(IOException e){
-				RequestStatus = 4;
-				return e.getMessage();
-			}
-			catch(Exception e){
-				RequestStatus = 10;
-				return e.getMessage();
+				doOutput(conn, output);
 			}
 			
-			RequestStatus = conn.getResponseCode();
-			String response = null;
+			String response = Integer.toString(conn.getResponseCode());
+			RequestStatus = conn.getHeaderFieldInt("status_code", 0);
 			if (RequestStatus == STATUS_XML_OK)
 			{
+				inputStream = conn.getInputStream();
 				response = readIt(inputStream);
 			}
 			return response;
@@ -132,51 +100,17 @@ class HttpConnectionTask extends AsyncTask<String, Void, String>
 		}
 	}
 	
-	private void doOutput(HttpURLConnection conn, String output, String type) throws IOException, SocketTimeoutException
+	private void doOutput(HttpURLConnection conn, String output) throws IOException, SocketTimeoutException
 	{
 		conn.setDoOutput(true);
-		conn.setRequestProperty("Content-Length", "" + Integer.toString(output.getBytes().length));
-		conn.setRequestProperty("Content-Language", "en-US");
 		conn.setUseCaches(false);
-		if (type == "xml")
-		{
-			conn.setRequestProperty("Content-Type", "application/xml");
-		}
+		conn.setRequestProperty("Content-Length", "" + Integer.toString(output.getBytes().length));
+		conn.setRequestProperty("Content-Type", "application/xml");
 
-		OutputStreamWriter outWriter = null;
-		OutputStream outStream = null;
-
-		try{
-			outStream = conn.getOutputStream();
-		} catch(SocketTimeoutException e){
-			throw e;
-		} catch(Exception e){
-			RequestStatus = 5;
-		}
-
-		try{
-			outWriter = new OutputStreamWriter(outStream, "UTF-8");
-		} catch(Exception e){
-			RequestStatus = 6;
-		}
-
-		try{
-			outWriter.write(output);
-		} catch(Exception e){
-			RequestStatus = 7;
-		}
-		
-		try{
-			outWriter.flush();
-		} catch(Exception e){
-			RequestStatus = 8;
-		}
-
-		try{
-			outWriter.close();
-		}  catch(Exception e){
-			RequestStatus = 9;
-		}
+		OutputStreamWriter outWriter = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
+		outWriter.write(output);
+		outWriter.flush();
+		outWriter.close();
 	}
 
 	// Reads an InputStream and converts it to a String.

@@ -24,6 +24,7 @@
     <string name="temp_story_file_name">tmpStory.xml</string>
     <string name="server_url">http://www.motik.dx.am/</string>
     <string name="server_ur">http://10.0.2.2/TellATale/</string>
+    <string name="server_urx">http://84.229.222.166/TellATale</string>
     <string name="server_send_url_suffix">send_story.php</string>
     <string name="server_recv_url_suffix">receive_story.php</string>
     <string name="button_next">-&gt;</string>

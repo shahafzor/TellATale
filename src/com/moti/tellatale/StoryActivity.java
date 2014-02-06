@@ -37,7 +37,7 @@ public abstract class StoryActivity extends Activity
 		if (MainActivity.checkConnection(this))
 		{
 			HttpConnectionTask conn = new HttpConnectionTask(this);
-			conn.execute(url, xmlFile, "xml");
+			conn.execute(url, xmlFile);
 		}
 		else
 		{

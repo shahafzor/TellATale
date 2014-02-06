@@ -73,13 +73,13 @@ public class NewStoryActivity extends StoryActivity
 			message(":-( Server Error");
 			break;
 		case HttpConnectionTask.STATUS_APP_ERROR:
-			message(":-( App Error");
+			message(":-( App Error" + response);
 			break;
 		case HttpConnectionTask.STATUS_ERROR_TIMEOUT:
 			message(":-( Timeout Error");
 			break;
 		default:
-			message("Something...");
+			message("Something..." + response);
 		}
 	}
 }

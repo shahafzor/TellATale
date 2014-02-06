@@ -146,43 +146,13 @@ public class EditStoryActivity extends StoryActivity
 			message(":-( Server Error");
 			break;
 		case HttpConnectionTask.STATUS_APP_ERROR:
-			message(":-( App Error");
+			message(":-( App Error: " + response);
 			break;
 		case HttpConnectionTask.STATUS_ERROR_TIMEOUT:
 			message(":-( Timeout Error");
 			break;
-		case 1:
-			message(":-( Error #1");
-			break;
-		case 2:
-			message(":-( Error #2");
-			break;
-		case 3:
-			message(":-( Error #3: " + response);
-			break;
-		case 4:
-			message(":-( Error #4: " + response);
-			break;
-		case 5:
-			message(":-( Error #5");
-			break;
-		case 6:
-			message(":-( Error #6");
-			break;
-		case 7:
-			message(":-( Error #7");
-			break;
-		case 8:
-			message(":-( Error #8");
-			break;
-		case 9:
-			message(":-( Error #9");
-			break;
-		case 10:
-			message(":-( Error #10:" + response);
-			break;
 		default:
-			message(":-( What the fuck???");
+			message(":-( What the fuck??? " + response);
 		}
 	}
 	
@@ -242,8 +212,9 @@ public class EditStoryActivity extends StoryActivity
 			String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
 			String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
 			String credentials = "username=" + userName + "&password=" + password;
+			url += "?" + credentials;
 			HttpConnectionTask conn = new HttpConnectionTask(this);
-			conn.execute(url, credentials, "html");
+			conn.execute(url, null);
 		}
 		else
 		{
