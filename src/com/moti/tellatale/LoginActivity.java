@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -21,10 +22,12 @@ public class LoginActivity extends Activity
 		setContentView(R.layout.activity_login);
 
 		WebView webview = (WebView)findViewById(R.id.webview_login);
-		webview.getSettings().setJavaScriptEnabled(true);
 		webview.addJavascriptInterface(this, "Android");
-		webview.loadUrl(getString(R.string.server_url));
 		webview.setWebViewClient(new WebViewClient());
+		WebSettings settings = webview.getSettings();
+		settings.setJavaScriptEnabled(true);
+		settings.setBuiltInZoomControls(true);
+		webview.loadUrl(getString(R.string.server_url));
 	}
 
 	@Override
