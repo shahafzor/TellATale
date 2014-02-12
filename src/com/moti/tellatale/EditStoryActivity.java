@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.moti.telatale.R;
 /**TODO:
- * need_drop
  * tests:
  * 1 - receive illegal xml file
  */
@@ -24,6 +23,10 @@ import com.moti.telatale.R;
  */
 public class EditStoryActivity extends StoryActivity
 {
+	public final static int SEND = 1;
+	public final static int REJECT = 2;
+	public final static int REPLACE = 3;
+	
 	// The story object that will be edited or continued
 	private Story ReceivedStory;
 	
@@ -52,15 +55,14 @@ public class EditStoryActivity extends StoryActivity
 			}
 			else
 			{
-				getStoryFromServer();
+				getStoryFromServer(SEND, null);
 			}
 		}
 		else
 		{
-			getStoryFromServer();
+			getStoryFromServer(SEND, null);
 		}
 	}
-	
 	
 	protected void onPause()
 	{
@@ -136,6 +138,10 @@ public class EditStoryActivity extends StoryActivity
 			message(":-) Your story has been sent!");
 			clearActivity();
 			break;
+		case HttpConnectionTask.STATUS_ILEGAL_SEGMENT:
+			message(":-( Ilegal story");
+			clearActivity();
+			break;
 		case HttpConnectionTask.STATUS_NO_STORY_AVAILABLE:
 			message(":-( There is no story available at the momment");
 			break;
@@ -168,6 +174,8 @@ public class EditStoryActivity extends StoryActivity
 		editor.remove(getString(R.string.pref_key_segment_index));
 		editor.commit();
 		deleteFile(getString(R.string.temp_story_file_name));
+		
+		// make sure EditSegment's text will not be saved when activity ends
 		EditSegment = null;
 	}
 	
@@ -203,23 +211,23 @@ public class EditStoryActivity extends StoryActivity
 		return true;
 	}
 	
-	
-	private void getStoryFromServer()
+	/**
+	 * Initiates a request to the server to send a story
+	 * @param action The action the server should do
+	 * SEND: just send an available story REPLACE: replace the current story
+ 	 */
+	private void getStoryFromServer(int action, String storyName)
 	{
 		String url = getString(R.string.server_url) + getString(R.string.server_send_url_suffix);
-		if (MainActivity.checkConnection(this))
+		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
+		String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
+		String credentials = "username=" + userName + "&password=" + password;
+		url += "?" + credentials + "&action=" + action;
+		if (storyName != null)
 		{
-			String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
-			String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
-			String credentials = "username=" + userName + "&password=" + password;
-			url += "?" + credentials;
-			HttpConnectionTask conn = new HttpConnectionTask(this);
-			conn.execute(url, null);
+			url += "&storyName=" + storyName;
 		}
-		else
-		{
-			message("You have no internet connection");
-		}
+		sendHttp(url, null);
 	}
 
 	public void onClickSendButton(View sendButton)
@@ -239,6 +247,20 @@ public class EditStoryActivity extends StoryActivity
 		Story story = new Story(segment, ReceivedStory.getName());
 		message("Sending...");
 		sendStory(story);
+	}
+	
+	public void onClickRejectButton(View button)
+	{
+		clearActivity();
+		message("Loading a new story...");
+		getStoryFromServer(REJECT, ReceivedStory.getName());
+	}
+	
+	public void onClickReplaceButton(View button)
+	{
+		clearActivity();
+		message("Loading a new story...");
+		getStoryFromServer(REPLACE, ReceivedStory.getName());
 	}
 	
 	/**

@@ -17,6 +17,8 @@
     <string name="button_new_story">New Story</string>
     <string name="button_logout">Logout</string>
     <string name="button_send_story">Send</string>
+    <string name="button_reject_story">Reject</string>
+    <string name="button_replace_story">Replace</string>
     <string name="title_activity_new_story">New Story</string>
     <string name="edittext_hint_story">Type your story</string>
     <string name="button_get_story">Get a Story</string>

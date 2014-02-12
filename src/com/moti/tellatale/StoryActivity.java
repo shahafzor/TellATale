@@ -33,11 +33,15 @@ public abstract class StoryActivity extends Activity
 	{
 		String xmlFile = story.toXml();
 		String url = getString(R.string.server_url) + getString(R.string.server_recv_url_suffix);
-		
+		sendHttp(url, xmlFile);
+	}
+	
+	protected void sendHttp(String url, String output)
+	{
 		if (MainActivity.checkConnection(this))
 		{
 			HttpConnectionTask conn = new HttpConnectionTask(this);
-			conn.execute(url, xmlFile);
+			conn.execute(url, output);
 		}
 		else
 		{

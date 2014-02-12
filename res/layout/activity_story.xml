@@ -22,9 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
-            
+
             <Button
-                android:id="@+id/button_prev"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -32,13 +31,11 @@
                 android:text="@string/button_prev" />
 
             <Button
-                android:id="@+id/button_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:onClick="onClickNextSeg"
                 android:text="@string/button_next" />
-
         </LinearLayout>
 
         <EditText
@@ -57,12 +54,25 @@
             android:paddingTop="@dimen/activity_vertical_margin" >
 
             <Button
-                android:id="@+id/button_add_segment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:onClick="onClickSendButton"
                 android:text="@string/button_send_story" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:onClick="onClickRejectButton"
+                android:text="@string/button_reject_story" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:onClick="onClickReplaceButton"
+                android:text="@string/button_replace_story" />
         </LinearLayout>
     </LinearLayout>
 

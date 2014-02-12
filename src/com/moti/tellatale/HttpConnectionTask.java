@@ -13,15 +13,19 @@ import android.os.AsyncTask;
 
 class HttpConnectionTask extends AsyncTask<String, Void, String>
 {
+	// server error codes
 	public static final int STATUS_XML_OK = 1;
 	public static final int STATUS_NO_STORY_AVAILABLE = 2;
 	public static final int STATUS_RESPONSE_OK = 3;
 	public static final int STATUS_SERVER_ERROR = 4;
 	public static final int STATUS_ERROR_CREDENTIALS = 5;
-	public static final int STATUS_APP_ERROR = 6;
-	public static final int STATUS_ERROR_XML_PARSE = 7;
-	public static final int STATUS_ERROR_STRING_CONVERT = 8;
-	public static final int STATUS_ERROR_TIMEOUT = 9;
+	public static final int STATUS_ILEGAL_SEGMENT = 6;
+	
+	// app error codes
+	public static final int STATUS_APP_ERROR = 100;
+	public static final int STATUS_ERROR_XML_PARSE = 101;
+	public static final int STATUS_ERROR_STRING_CONVERT = 102;
+	public static final int STATUS_ERROR_TIMEOUT = 103;
 	
 	private StoryActivity ParentActivity;
 	private int RequestStatus = STATUS_APP_ERROR;
