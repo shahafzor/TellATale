@@ -232,10 +232,10 @@ public class Story
 	
 	
 	/**
-	 * Returns the "real" story, i.e the text of the story object, without the last story segment
-	 * @return The story as a String, empty String if there is one or none story segments
+	 * Returns the "real" story, i.e the text of the story object
+	 * @return The story as a String, empty String if there are no story segments
 	 */
-	public String toString()
+	public String getText()
 	{
 		String storyText = "";
 		Iterator<StorySegment> it = getIterator();
@@ -243,6 +243,23 @@ public class Story
 		{
 			StorySegment segment = it.next();
 			if (segment.isDropped() || segment.getSeqNumber() == LastSeqNumber)
+			{
+				continue;
+			}
+			storyText += segment.getText() + "\n";
+		}
+		return storyText;
+	}
+	
+	@Override
+	public String toString()
+	{
+		String storyText = "";
+		Iterator<StorySegment> it = getIterator();
+		while (it.hasNext())
+		{
+			StorySegment segment = it.next();
+			if (segment.isDropped())
 			{
 				continue;
 			}

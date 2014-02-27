@@ -51,6 +51,15 @@
             android:onClick="onClickGetStory"
             android:text="@string/button_get_story"
             android:visibility="gone" />
+        
+        <Button
+            android:id="@+id/button_my_stories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:onClick="onClickMyStories"
+            android:text="@string/button_my_stories"
+            android:visibility="gone" />
     </LinearLayout>
 
 </LinearLayout>

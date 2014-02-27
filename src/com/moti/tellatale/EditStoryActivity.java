@@ -89,7 +89,7 @@ public class EditStoryActivity extends StoryActivity
 		}
 		
 		String lastSegmentText = lastSegment.getText();
-		String storyText = ReceivedStory.toString();
+		String storyText = ReceivedStory.getText();
 		
 		setContentView(R.layout.activity_story);
 		LastSegmentTextView = (TextView) findViewById(R.id.textview_last_segment);
@@ -194,7 +194,7 @@ public class EditStoryActivity extends StoryActivity
 		XmlParser xmlParser = new XmlParser();
 		try
 		{
-			Story story = xmlParser.parse(xmlStory);
+			Story story = xmlParser.parseStory(xmlStory);
 			return story;
 		}
 		catch (Exception e)

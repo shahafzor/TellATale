@@ -37,6 +37,10 @@
             android:name="com.moti.tellatale.EditStoryActivity"
             android:label="@string/title_activity_edit_story" >
         </activity>
+        <activity
+            android:name="com.moti.tellatale.MyStoriesActivity"
+            android:label="@string/title_activity_my_stories" >
+        </activity>
     </application>
 
 </manifest>

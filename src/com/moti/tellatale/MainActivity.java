@@ -79,6 +79,12 @@ public class MainActivity extends Activity
 		startActivity(intent);
 	}
 	
+	public void onClickMyStories(View view)
+	{
+		Intent intent = new Intent(this, MyStoriesActivity.class);
+		startActivity(intent);
+	}
+	
 	public void onClickLogout(View view)
 	{
 		clearFiles();
@@ -165,6 +171,9 @@ public class MainActivity extends Activity
 	    }
 	    
 	    button = (Button) findViewById(R.id.button_get_story);
+    	button.setVisibility(visibility2);
+    	
+    	button = (Button) findViewById(R.id.button_my_stories);
     	button.setVisibility(visibility2);
 	}
 }

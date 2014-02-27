@@ -2,6 +2,8 @@ package com.moti.tellatale;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -16,16 +18,37 @@ import android.util.Xml;
 public class XmlParser
 {
     private static final String ns = null;
-
-    // We don't use namespaces
-
-    public Story parse(String in) throws XmlPullParserException, IOException
-    {    
+    
+    private XmlPullParser initParser(String in) throws XmlPullParserException, IOException
+    {
     	XmlPullParser parser = Xml.newPullParser();
     	parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
     	parser.setInput(new StringReader(in));
     	parser.nextTag();
-    	return readStory(parser);   
+    	return parser;
+    }
+
+    public Story parseStory(String in) throws XmlPullParserException, IOException
+    {
+    	XmlPullParser parser = initParser(in);
+    	return readStory(parser);
+    }
+    
+    public List<Story> parseStories(String in) throws XmlPullParserException, IOException
+    {
+    	XmlPullParser parser = initParser(in);
+    	return readStories(parser);
+    }
+    
+    private List<Story> readStories(XmlPullParser parser) throws XmlPullParserException, IOException
+    {
+        parser.require(XmlPullParser.START_TAG, ns, "stories");
+        List<Story> stories = new ArrayList<Story>();
+        while (parser.next() != XmlPullParser.END_TAG)
+        {
+            stories.add(readStory(parser));
+        }
+        return stories;
     }
 
     private Story readStory(XmlPullParser parser) throws XmlPullParserException, IOException
