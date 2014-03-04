@@ -19,9 +19,8 @@ public class MyStoriesActivity extends StoryActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_my_stories);
 		
-		StoryTextView = (TextView) findViewById(R.id.textview_story);
+		message("Getting your stories...");
 		getMyStoriesFromServer();
 	}
 
@@ -41,8 +40,14 @@ public class MyStoriesActivity extends StoryActivity
 			Stories = parseXml(response);
 			if (Stories != null && Stories.size() > 0)
 			{
+				setContentView(R.layout.activity_my_stories);
+				StoryTextView = (TextView) findViewById(R.id.textview_story);
 				Story story = Stories.get(CurrentIndex);
 				StoryTextView.setText(story.toString());
+			}
+			else
+			{
+				message("Where is the cat?");
 			}
 		}
 		else if (requestStatus == HttpConnectionTask.STATUS_NO_STORY_AVAILABLE)
@@ -70,7 +75,7 @@ public class MyStoriesActivity extends StoryActivity
 	
 	public void onClickNextStory(View sendButton)
 	{
-		if (CurrentIndex < Stories.size() - 1)
+		if (Stories != null && CurrentIndex < Stories.size() - 1)
 		{
 			CurrentIndex++;
 			StoryTextView.setText(Stories.get(CurrentIndex).toString());
@@ -79,7 +84,7 @@ public class MyStoriesActivity extends StoryActivity
 	
 	public void onClickPrevStory(View sendButton)
 	{
-		if (CurrentIndex > 0)
+		if (Stories != null && CurrentIndex > 0)
 		{
 			CurrentIndex--;
 			StoryTextView.setText(Stories.get(CurrentIndex).toString());
