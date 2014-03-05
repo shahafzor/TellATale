@@ -9,8 +9,14 @@ import android.widget.TextView;
 
 import com.moti.telatale.R;
 
+/** TODO:
+ * - decide what to do with many versions on last sequence number
+ */
 public class MyStoriesActivity extends StoryActivity
 {
+	private static final String StoriesXmlKey = "StoriesXmlKey";
+	private static final String CurrentIndexKey = "CurrentIndexKey";
+	private String StoriesXml;
 	private List<Story> Stories;
 	private int CurrentIndex = 0;
 	TextView StoryTextView;
@@ -20,8 +26,30 @@ public class MyStoriesActivity extends StoryActivity
 	{
 		super.onCreate(savedInstanceState);
 		
-		message("Getting your stories...");
-		getMyStoriesFromServer();
+		if (savedInstanceState == null)
+		{
+			message("Getting your stories...");
+			getMyStoriesFromServer();
+		}
+	}
+	
+	@Override
+	protected void onSaveInstanceState (Bundle savedInstanceState)
+	{
+		savedInstanceState.putString(StoriesXmlKey, StoriesXml);
+		savedInstanceState.putInt(CurrentIndexKey, CurrentIndex);
+		
+		super.onSaveInstanceState(savedInstanceState);
+	}
+	
+	@Override
+	protected void onRestoreInstanceState (Bundle savedInstanceState)
+	{
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		StoriesXml = savedInstanceState.getString(StoriesXmlKey);
+		CurrentIndex = savedInstanceState.getInt(CurrentIndexKey);
+		loadStories();
 	}
 
 	@Override
@@ -37,18 +65,8 @@ public class MyStoriesActivity extends StoryActivity
 	{
 		if (requestStatus == HttpConnectionTask.STATUS_XML_OK)
 		{
-			Stories = parseXml(response);
-			if (Stories != null && Stories.size() > 0)
-			{
-				setContentView(R.layout.activity_my_stories);
-				StoryTextView = (TextView) findViewById(R.id.textview_story);
-				Story story = Stories.get(CurrentIndex);
-				StoryTextView.setText(story.toString());
-			}
-			else
-			{
-				message("Where is the cat?");
-			}
+			StoriesXml = response;
+			loadStories();
 		}
 		else if (requestStatus == HttpConnectionTask.STATUS_NO_STORY_AVAILABLE)
 		{
@@ -57,6 +75,30 @@ public class MyStoriesActivity extends StoryActivity
 		else
 		{
 			message("What's the matter, dear?");
+		}
+	}
+	
+	private void loadStories()
+	{
+		Stories = parseXml(StoriesXml);
+		if (Stories != null && Stories.size() > 0)
+		{
+			setContentView(R.layout.activity_my_stories);
+			StoryTextView = (TextView) findViewById(R.id.textview_story);
+			try
+			{
+				Story story = Stories.get(CurrentIndex);
+				StoryTextView.setText(story.toString());
+			}
+			catch (IndexOutOfBoundsException e)
+			{
+				message("Happy cow!");
+			}
+			
+		}
+		else
+		{
+			message("Where is the cat?");
 		}
 	}
 	

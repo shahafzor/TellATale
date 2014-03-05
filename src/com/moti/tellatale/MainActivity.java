@@ -31,7 +31,7 @@ public class MainActivity extends Activity
 		
 		// Set the activity layout
 		setContentView(R.layout.activity_main);
-	
+
 		SharedPref = getSharedPreferences(getString(R.string.pref_file_name), MODE_PRIVATE);
 		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
 		int permission = SharedPref.getInt(getString(R.string.pref_key_user_permission), 0);
@@ -43,7 +43,6 @@ public class MainActivity extends Activity
 		{
 			setMenu(permission, userName, true);
 		}
-		
 	}
 	
 	private void startLoginActivity()
@@ -91,20 +90,11 @@ public class MainActivity extends Activity
 		setMenu(1, null, false);
 	}
 	
-	//TODO: create clear() function for each activity
 	private void clearFiles()
 	{
 		Editor editor = SharedPref.edit();
-		editor.remove(getString(R.string.pref_key_user_name));
-		editor.remove(getString(R.string.pref_key_user_password));
-		editor.remove(getString(R.string.pref_key_user_permission));
-		editor.remove(getString(R.string.pref_key_saved_new_story_segment));
-		editor.remove(getString(R.string.pref_key_temp_story_file_exists));
-		editor.remove(getString(R.string.pref_key_saved_segment));
-		editor.remove(getString(R.string.pref_key_is_duplicate_segment));
-		editor.remove(getString(R.string.pref_key_segment_index));
+		editor.clear();
 		editor.commit();
-		deleteFile(getString(R.string.temp_story_file_name));
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)

@@ -1,8 +1,5 @@
 package com.moti.tellatale;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
 import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -42,26 +39,19 @@ public class EditStoryActivity extends StoryActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		message("Loading story...");
 		
-		boolean fileExists = SharedPref.contains(getString(R.string.pref_key_temp_story_file_exists));
-		if (fileExists)
+		String xmlStory = SharedPref.getString(getString(R.string.pref_key_temp_story), null);
+		if (xmlStory != null)
 		{
-			String fileName = getString(R.string.temp_story_file_name);
-			ReceivedStory = parseXml(getXmlFromFile(fileName));
+			ReceivedStory = parseXml(xmlStory);
 			if (ReceivedStory != null)
 			{
 				loadStory();
-			}
-			else
-			{
-				getStoryFromServer(SEND, null);
+				return;
 			}
 		}
-		else
-		{
-			getStoryFromServer(SEND, null);
-		}
+		
+		getStoryFromServer(SEND, null);
 	}
 	
 	protected void onPause()
@@ -130,9 +120,10 @@ public class EditStoryActivity extends StoryActivity
 			ReceivedStory = parseXml(response);
 			if (ReceivedStory != null)
 			{
-				saveStory(response);
+				saveString(response, getString(R.string.pref_key_temp_story));
 				loadStory();
 			}
+			// TODO: else
 			break;
 		case HttpConnectionTask.STATUS_RESPONSE_OK:
 			message(":-) Your story has been sent!");
@@ -168,12 +159,11 @@ public class EditStoryActivity extends StoryActivity
 	public void clearActivity()
 	{
 		Editor editor = SharedPref.edit();
-		editor.remove(getString(R.string.pref_key_temp_story_file_exists));
+		editor.remove(getString(R.string.pref_key_temp_story));
 		editor.remove(getString(R.string.pref_key_saved_segment));
 		editor.remove(getString(R.string.pref_key_is_duplicate_segment));
 		editor.remove(getString(R.string.pref_key_segment_index));
 		editor.commit();
-		deleteFile(getString(R.string.temp_story_file_name));
 		
 		// make sure EditSegment's text will not be saved when activity ends
 		EditSegment = null;
@@ -218,6 +208,7 @@ public class EditStoryActivity extends StoryActivity
  	 */
 	private void getStoryFromServer(int action, String storyName)
 	{
+		message("Loading story...");
 		String url = getString(R.string.server_url) + getString(R.string.server_send_url_suffix);
 		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
 		String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
@@ -286,7 +277,6 @@ public class EditStoryActivity extends StoryActivity
 		saveInt(ReceivedStory.getCurrentLastSeqNumberLocation(), getString(R.string.pref_key_segment_index));
 	}
 	
-	
 	private void setX()
 	{
 		LastSegmentTextView.setTextColor(Color.GRAY);
@@ -328,68 +318,5 @@ public class EditStoryActivity extends StoryActivity
 				EditSegment.setText("");
 			}
 		}
-	}
-
-	/**
-	 * Saves the story object 'ReceivedStory' to a xml file
-	 */
-	private void saveStory(String story)
-	{
-		String fileName = getString(R.string.temp_story_file_name);
-		if (saveXmlToFile(story, fileName))
-		{
-			saveBoolean(true, getString(R.string.pref_key_temp_story_file_exists));
-		}
-	}
-	
-	/**
-	 * Saves a xml format String to a xml file 
-	 * @param xmlString
-	 * @param fileName
-	 * @return if file was saved: true, else: false
-	 */
-	private boolean saveXmlToFile(String xmlString, String fileName)
-	{
-		try
-		{
-			FileOutputStream outputStream = openFileOutput(fileName, MODE_PRIVATE);
-			outputStream.write(xmlString.getBytes());
-			outputStream.close();
-			return true;
-		}
-		catch (Exception e)
-		{
-			return false;
-		}
-	}
-	
-	/**
-	 * Opens the xml file 'filename', and returns its content as a String
-	 * @param fileName the name of the xml file to read
-	 * @return String content of the file, or null if an error occurred
-	 */
-	private String getXmlFromFile(String fileName)
-	{
-		byte[] buffer = new byte[StoryActivity.BUFFER_SIZE];
-		String xml = new String();
-		try
-		{
-			FileInputStream inputStream = openFileInput(fileName);
-			int len = 0;
-			while (len != -1)
-			{
-				len = inputStream.read(buffer);
-				if (len != -1)
-				{
-					xml += new String(buffer, 0, len);
-				}
-			}
-		}
-		catch (Exception e)
-		{
-			return null;
-		}
-		
-		return xml;
 	}
 }
