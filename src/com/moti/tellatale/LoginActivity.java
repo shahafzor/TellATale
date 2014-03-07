@@ -1,33 +1,39 @@
 package com.moti.tellatale;
 
-import com.moti.telatale.R;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.Menu;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
-public class LoginActivity extends Activity
+public class LoginActivity extends StoryActivity
 {
-	@SuppressLint("SetJavaScriptEnabled")
+	private static final int ActionLogin = 0;
+	private static String LoginUrl = "index.php";
+	private static final int ActionNewUser = 1;
+	private static final String NewUserUrl = "add_user.php";
+	private String Username;
+	private String Password;
+	private TextView ErrorTextView;
+	private TextView UsernameErrorTextView;
+	private TextView PasswordErrorTextView;
+	private int Action = ActionLogin;
+	private String Url = LoginUrl;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-
-		WebView webview = (WebView)findViewById(R.id.webview_login);
-		webview.addJavascriptInterface(this, "Android");
-		webview.setWebViewClient(new WebViewClient());
-		WebSettings settings = webview.getSettings();
-		settings.setJavaScriptEnabled(true);
-		settings.setBuiltInZoomControls(true);
-		webview.loadUrl(getString(R.string.server_url));
+		ErrorTextView = (TextView) findViewById(R.id.textview_error_msg);
+		ErrorTextView.setTextColor(Color.RED);
+		UsernameErrorTextView = (TextView) findViewById(R.id.textview_username_error_msg);
+		UsernameErrorTextView.setTextColor(Color.RED);
+		PasswordErrorTextView = (TextView) findViewById(R.id.textview_password_error_msg);
+		PasswordErrorTextView.setTextColor(Color.RED);
 	}
 
 	@Override
@@ -38,19 +44,92 @@ public class LoginActivity extends Activity
 		return true;
 	}
 	
-	/**
-	 * this function is called by the javascript of the login webpage after a successful login
-	 */
-	@JavascriptInterface
-	public void login(String username, int permission, String password)
+	public void onClickChangeAction(View v)
 	{
-		SharedPreferences sharedPref = getSharedPreferences(getString(R.string.pref_file_name), MODE_PRIVATE);
-	    SharedPreferences.Editor editor = sharedPref.edit();
-	    editor.putString(getString(R.string.pref_key_user_name), username);
-	    editor.putString(getString(R.string.pref_key_user_password), password);
-	    editor.putInt(getString(R.string.pref_key_user_permission), permission);
-	    editor.commit();   
-	    setResult(RESULT_OK, null);
-	    finish();
+		TextView link = (TextView)v;
+		clearErrorMessages();
+		if (Action == ActionLogin)
+		{
+			Action = ActionNewUser;
+			Url = NewUserUrl;
+			link.setText(getString(R.string.login));
+			setTitle(getString(R.string.new_user));
+		}
+		else
+		{
+			Action = ActionLogin;
+			Url = LoginUrl;
+			link.setText(getString(R.string.new_user));
+			setTitle(getString(R.string.login));
+		}
+		link.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+	}
+	
+	public void onClickLogin(View v)
+	{
+		clearErrorMessages();
+		boolean inputIsValid = true;
+		
+		Username = ((EditText)findViewById(R.id.edittext_username)).getText().toString();
+		if (!InputValidation.validateUserName(Username))
+		{
+			inputIsValid = false;
+			UsernameErrorTextView.setText(getString(R.string.username_error_msg));
+		}
+		
+		Password = ((EditText)findViewById(R.id.edittext_password)).getText().toString();
+		if (!InputValidation.validatePassword(Password))
+		{
+			inputIsValid = false;
+			PasswordErrorTextView.setText(getString(R.string.password_error_msg));
+		}
+		
+		if (inputIsValid)
+		{
+			String url = getString(R.string.server_url) + Url;
+			String credentials = "username=" + Username + "&password=" + Password;
+			url += "?" + credentials;
+			sendHttp(url, null);
+		}
+	}
+
+	@Override
+	public void connectionFinished(int requestStatus, String response)
+	{
+		switch (requestStatus)
+		{
+		case HttpConnectionTask.STATUS_LOGIN_OK:
+			try
+			{
+				int permission = 0;
+				if (Action == ActionLogin)
+					permission = Integer.parseInt(response);
+				Editor editor = SharedPref.edit();
+				editor.putString(getString(R.string.pref_key_user_name), Username);
+				editor.putString(getString(R.string.pref_key_user_password), Password);
+				editor.putInt(getString(R.string.pref_key_user_permission), permission);
+				editor.commit();   
+				setResult(RESULT_OK, null);
+				finish();
+				break;
+			}
+			catch (NumberFormatException e){}
+		case HttpConnectionTask.STATUS_ERROR_CREDENTIALS:
+			ErrorTextView.setText("wrong login details");
+			break;
+		case HttpConnectionTask.STATUS_ILLEGAL_INPUT:
+			ErrorTextView.setText("illegal input");
+			break;
+		default:
+			ErrorTextView.setText("some error");
+			break;
+		}
+	}
+	
+	private void clearErrorMessages()
+	{
+		ErrorTextView.setText("");
+		UsernameErrorTextView.setText("");
+		PasswordErrorTextView.setText("");
 	}
 }

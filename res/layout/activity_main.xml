@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:onClick="onClickLogin"
-        android:text="@string/button_login_text"
+        android:text="@string/button_login"
         android:visibility="visible" />
 
     <Button

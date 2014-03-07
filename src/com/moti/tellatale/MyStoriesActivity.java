@@ -7,7 +7,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-import com.moti.telatale.R;
+import com.moti.tellatale.R;
 
 /** TODO:
  * - decide what to do with many versions on last sequence number

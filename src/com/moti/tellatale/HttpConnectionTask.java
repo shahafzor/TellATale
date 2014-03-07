@@ -20,6 +20,9 @@ class HttpConnectionTask extends AsyncTask<String, Void, String>
 	public static final int STATUS_SERVER_ERROR = 4;
 	public static final int STATUS_ERROR_CREDENTIALS = 5;
 	public static final int STATUS_ILEGAL_SEGMENT = 6;
+	public static final int STATUS_LOGIN_OK = 7;
+	public static final int STATUS_ILLEGAL_INPUT = 8;
+	public static final int STATUS_DUPLICATE_USER = 9;
 	
 	// app error codes
 	public static final int STATUS_APP_ERROR = 100;
@@ -78,7 +81,7 @@ class HttpConnectionTask extends AsyncTask<String, Void, String>
 			
 			String response = Integer.toString(conn.getResponseCode());
 			RequestStatus = conn.getHeaderFieldInt("status_code", 0);
-			if (RequestStatus == STATUS_XML_OK)
+			if (RequestStatus == STATUS_XML_OK || RequestStatus == STATUS_LOGIN_OK)
 			{
 				inputStream = conn.getInputStream();
 				response = readIt(inputStream);

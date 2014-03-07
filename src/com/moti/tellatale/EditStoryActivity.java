@@ -9,11 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.moti.telatale.R;
-/**TODO:
- * tests:
- * 1 - receive illegal xml file
- */
+import com.moti.tellatale.R;
 
 /**
  * This activity is used to edit or continue an existing story.

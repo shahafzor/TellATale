@@ -30,6 +30,6 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:onClick="onClickSendButton"
-            android:text="@string/button_send_story" />
+            android:text="@string/button_send" />
     </LinearLayout>
 </LinearLayout>

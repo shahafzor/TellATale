@@ -4,7 +4,7 @@ package com.moti.tellatale;
 // - check user input
 // - manage 'strings' res
 
-import com.moti.telatale.R;
+import com.moti.tellatale.R;
 
 import android.app.Activity;
 import android.content.Context;

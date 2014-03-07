@@ -1,6 +1,6 @@
 package com.moti.tellatale;
 
-import com.moti.telatale.R;
+import com.moti.tellatale.R;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

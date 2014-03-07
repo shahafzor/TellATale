@@ -6,7 +6,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 
-import com.moti.telatale.R;
+import com.moti.tellatale.R;
 
 public class NewStoryActivity extends StoryActivity
 {
