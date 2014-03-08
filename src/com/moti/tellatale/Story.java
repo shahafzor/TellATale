@@ -242,11 +242,15 @@ public class Story
 		while (it.hasNext())
 		{
 			StorySegment segment = it.next();
-			if (segment.isDropped() || segment.getSeqNumber() == LastSeqNumber)
+			if (segment.getSeqNumber() == LastSeqNumber)
 			{
-				continue;
+				// don't add the last segment
+				break;
 			}
-			storyText += segment.getText() + "\n";
+			if (!segment.isDropped()) //don't add dropped segment
+			{
+				storyText += segment.getText() + "\n";
+			}
 		}
 		return storyText;
 	}
@@ -259,11 +263,10 @@ public class Story
 		while (it.hasNext())
 		{
 			StorySegment segment = it.next();
-			if (segment.isDropped())
+			if (!segment.isDropped()) //don't add dropped segment
 			{
-				continue;
+				storyText += segment.getText() + "\n";
 			}
-			storyText += segment.getText() + "\n";
 		}
 		return storyText;
 	}

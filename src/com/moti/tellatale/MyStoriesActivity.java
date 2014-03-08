@@ -9,9 +9,6 @@ import android.widget.TextView;
 
 import com.moti.tellatale.R;
 
-/** TODO:
- * - decide what to do with many versions on last sequence number
- */
 public class MyStoriesActivity extends StoryActivity
 {
 	private static final String StoriesXmlKey = "StoriesXmlKey";
@@ -88,7 +85,7 @@ public class MyStoriesActivity extends StoryActivity
 			try
 			{
 				Story story = Stories.get(CurrentIndex);
-				StoryTextView.setText(story.toString());
+				StoryTextView.setText(story.getText());
 			}
 			catch (IndexOutOfBoundsException e)
 			{
@@ -107,7 +104,7 @@ public class MyStoriesActivity extends StoryActivity
  	 */
 	private void getMyStoriesFromServer()
 	{
-		String url = getString(R.string.server_url) + getString(R.string.server_send_my_stories_url_suffix);
+		String url = SERVER_URL + SERVER_SEND_MY_STORIES_URL;
 		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
 		String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
 		String credentials = "username=" + userName + "&password=" + password;
@@ -120,7 +117,7 @@ public class MyStoriesActivity extends StoryActivity
 		if (Stories != null && CurrentIndex < Stories.size() - 1)
 		{
 			CurrentIndex++;
-			StoryTextView.setText(Stories.get(CurrentIndex).toString());
+			StoryTextView.setText(Stories.get(CurrentIndex).getText());
 		}
 	}
 	
@@ -129,7 +126,7 @@ public class MyStoriesActivity extends StoryActivity
 		if (Stories != null && CurrentIndex > 0)
 		{
 			CurrentIndex--;
-			StoryTextView.setText(Stories.get(CurrentIndex).toString());
+			StoryTextView.setText(Stories.get(CurrentIndex).getText());
 		}
 	}
 	

@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:onClick="onClickChangeAction"
-        android:text="@string/new_user"
+        android:text="@string/title_new_user"
         android:textColor="#0000cc"
         android:textSize="18sp" />
     
@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dip"
-        android:hint="@string/login_username"
+        android:hint="@string/edittext_hint_login_username"
         android:inputType="text"
         android:maxLength="12" />
 
@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dip"
-        android:hint="@string/login_password"
+        android:hint="@string/edittext_hint_login_password"
         android:inputType="textPassword"
         android:maxLength="12" />
 

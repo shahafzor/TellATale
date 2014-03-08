@@ -1,5 +1,8 @@
 package com.moti.tellatale;
-
+/**
+ * TODO:
+ * - validate story?
+ */
 public class InputValidation
 {
 	public static boolean validateUserName(String username)

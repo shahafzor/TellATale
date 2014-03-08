@@ -1,9 +1,5 @@
 package com.moti.tellatale;
 
-//TODO
-// - check user input
-// - manage 'strings' res
-
 import com.moti.tellatale.R;
 
 import android.app.Activity;

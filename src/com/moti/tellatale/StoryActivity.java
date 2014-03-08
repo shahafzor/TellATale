@@ -10,6 +10,15 @@ import android.widget.TextView;
 
 public abstract class StoryActivity extends Activity
 {
+	protected static final String SERVER_URL = "http://www.motik.dx.am/";
+	protected static final String SERVER_SEND_URL = "send_story.php";
+	protected static final String SERVER_RECEIVE_URL = "receive_story.php";
+	protected static final String SERVER_SEND_MY_STORIES_URL = "send_my_stories.php";
+	protected static String LOGIN_URL = "index.php";
+	protected static final String NEW_USER_URL = "add_user.php";
+	
+	
+	//public static final String SERVER_URL = "http://10.0.2.2/TellATale/";
 	public static final int BUFFER_SIZE = 1024;
 	public static final int MAX_SEGMENT_LENGTH = 150;
 	protected SharedPreferences SharedPref;
@@ -32,7 +41,7 @@ public abstract class StoryActivity extends Activity
 	protected void sendStory(Story story)
 	{
 		String xmlFile = story.toXml();
-		String url = getString(R.string.server_url) + getString(R.string.server_recv_url_suffix);
+		String url = SERVER_URL + SERVER_RECEIVE_URL;
 		sendHttp(url, xmlFile);
 	}
 	

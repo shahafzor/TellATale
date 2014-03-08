@@ -11,17 +11,15 @@ import android.widget.TextView;
 
 public class LoginActivity extends StoryActivity
 {
-	private static final int ActionLogin = 0;
-	private static String LoginUrl = "index.php";
-	private static final int ActionNewUser = 1;
-	private static final String NewUserUrl = "add_user.php";
+	private enum Action {login, newUser}
+
 	private String Username;
 	private String Password;
 	private TextView ErrorTextView;
 	private TextView UsernameErrorTextView;
 	private TextView PasswordErrorTextView;
-	private int Action = ActionLogin;
-	private String Url = LoginUrl;
+	private Action CurrentAction = Action.login;
+	private String Url = LOGIN_URL;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -48,19 +46,19 @@ public class LoginActivity extends StoryActivity
 	{
 		TextView link = (TextView)v;
 		clearErrorMessages();
-		if (Action == ActionLogin)
+		if (CurrentAction == Action.login)
 		{
-			Action = ActionNewUser;
-			Url = NewUserUrl;
-			link.setText(getString(R.string.login));
-			setTitle(getString(R.string.new_user));
+			CurrentAction = Action.newUser;
+			Url = NEW_USER_URL;
+			link.setText(getString(R.string.title_activity_login));
+			setTitle(getString(R.string.title_new_user));
 		}
 		else
 		{
-			Action = ActionLogin;
-			Url = LoginUrl;
-			link.setText(getString(R.string.new_user));
-			setTitle(getString(R.string.login));
+			CurrentAction = Action.login;
+			Url = LOGIN_URL;
+			link.setText(getString(R.string.title_new_user));
+			setTitle(getString(R.string.title_activity_login));
 		}
 		link.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
 	}
@@ -74,19 +72,19 @@ public class LoginActivity extends StoryActivity
 		if (!InputValidation.validateUserName(Username))
 		{
 			inputIsValid = false;
-			UsernameErrorTextView.setText(getString(R.string.username_error_msg));
+			UsernameErrorTextView.setText(getString(R.string.error_msg_username));
 		}
 		
 		Password = ((EditText)findViewById(R.id.edittext_password)).getText().toString();
 		if (!InputValidation.validatePassword(Password))
 		{
 			inputIsValid = false;
-			PasswordErrorTextView.setText(getString(R.string.password_error_msg));
+			PasswordErrorTextView.setText(getString(R.string.error_msg_password));
 		}
 		
 		if (inputIsValid)
 		{
-			String url = getString(R.string.server_url) + Url;
+			String url = SERVER_URL + Url;
 			String credentials = "username=" + Username + "&password=" + Password;
 			url += "?" + credentials;
 			sendHttp(url, null);
@@ -102,7 +100,7 @@ public class LoginActivity extends StoryActivity
 			try
 			{
 				int permission = 0;
-				if (Action == ActionLogin)
+				if (CurrentAction == Action.login)
 					permission = Integer.parseInt(response);
 				Editor editor = SharedPref.edit();
 				editor.putString(getString(R.string.pref_key_user_name), Username);

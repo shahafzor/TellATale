@@ -78,32 +78,31 @@ public class EditStoryActivity extends StoryActivity
 		String storyText = ReceivedStory.getText();
 		
 		setContentView(R.layout.activity_story);
-		LastSegmentTextView = (TextView) findViewById(R.id.textview_last_segment);
 		EditSegment = (EditText)findViewById(R.id.edittext_add_segment);
 		EditSegment.setFilters(new InputFilter[] {new InputFilter.LengthFilter(MAX_SEGMENT_LENGTH)});
 		StoryTextView = (TextView) findViewById(R.id.textview_story);
-		LastSegmentTextView.setTextColor(Color.RED);
 		StoryTextView.setText(storyText);
-
+		LastSegmentTextView = (TextView) findViewById(R.id.textview_last_segment);
+		LastSegmentTextView.setTextColor(Color.RED);
+		
 		if (SharedPref.contains(getString(R.string.pref_key_saved_segment)))
 		{
 			EditSegment.setText(SharedPref.getString(getString(R.string.pref_key_saved_segment), ""));
 			EditSegment.setSelection(EditSegment.length());
 
-			if (SharedPref.getBoolean(getString(R.string.pref_key_is_duplicate_segment), false))
+			if (SharedPref.getBoolean(getString(R.string.pref_key_is_parallel_segment), false))
 			{
-				setX();
+				setParallelLastSegment();
 			}
-			//else
-			//{
-				int index = SharedPref.getInt(getString(R.string.pref_key_segment_index), -1);
-				if (index != -1)
-				{
-					ReceivedStory.setCurrentLastSeqNumberLocation(index);
-					lastSegmentText = ReceivedStory.getStorySegment(index).getText();
-				}
-			//}
+			
+			int index = SharedPref.getInt(getString(R.string.pref_key_segment_index), -1);
+			if (index != -1)
+			{
+				ReceivedStory.setCurrentLastSeqNumberLocation(index);
+				lastSegmentText = ReceivedStory.getStorySegment(index).getText();
+			}
 		}
+		
 		LastSegmentTextView.setText(lastSegmentText);
 	}
 	
@@ -119,14 +118,17 @@ public class EditStoryActivity extends StoryActivity
 				saveString(response, getString(R.string.pref_key_temp_story));
 				loadStory();
 			}
-			// TODO: else
+			else
+			{
+				message("Illegal story received");
+			}
 			break;
 		case HttpConnectionTask.STATUS_RESPONSE_OK:
 			message(":-) Your story has been sent!");
 			clearActivity();
 			break;
 		case HttpConnectionTask.STATUS_ILEGAL_SEGMENT:
-			message(":-( Ilegal story");
+			message(":-( Ilegal story sent");
 			clearActivity();
 			break;
 		case HttpConnectionTask.STATUS_NO_STORY_AVAILABLE:
@@ -157,12 +159,13 @@ public class EditStoryActivity extends StoryActivity
 		Editor editor = SharedPref.edit();
 		editor.remove(getString(R.string.pref_key_temp_story));
 		editor.remove(getString(R.string.pref_key_saved_segment));
-		editor.remove(getString(R.string.pref_key_is_duplicate_segment));
+		editor.remove(getString(R.string.pref_key_is_parallel_segment));
 		editor.remove(getString(R.string.pref_key_segment_index));
 		editor.commit();
 		
 		// make sure EditSegment's text will not be saved when activity ends
-		EditSegment = null;
+		EditSegment.setText("");
+		NewSegment = true;
 	}
 	
 	/**
@@ -205,7 +208,7 @@ public class EditStoryActivity extends StoryActivity
 	private void getStoryFromServer(int action, String storyName)
 	{
 		message("Loading story...");
-		String url = getString(R.string.server_url) + getString(R.string.server_send_url_suffix);
+		String url = SERVER_URL + SERVER_SEND_URL;
 		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
 		String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
 		String credentials = "username=" + userName + "&password=" + password;
@@ -255,7 +258,7 @@ public class EditStoryActivity extends StoryActivity
 	 */
 	private void saveSegment()
 	{
-		if (EditSegment == null)
+		if (EditSegment == null || EditSegment.getText().toString() == "")
 		{
 			return;
 		}
@@ -264,16 +267,16 @@ public class EditStoryActivity extends StoryActivity
 		saveString(storyString, getString(R.string.pref_key_saved_segment));
 		if (!NewSegment)
 		{
-			saveBoolean(true, getString(R.string.pref_key_is_duplicate_segment));
+			saveBoolean(true, getString(R.string.pref_key_is_parallel_segment));
 		}
 		else
 		{
-			saveBoolean(false, getString(R.string.pref_key_is_duplicate_segment));
+			saveBoolean(false, getString(R.string.pref_key_is_parallel_segment));
 		}
 		saveInt(ReceivedStory.getCurrentLastSeqNumberLocation(), getString(R.string.pref_key_segment_index));
 	}
 	
-	private void setX()
+	private void setParallelLastSegment()
 	{
 		LastSegmentTextView.setTextColor(Color.GRAY);
 		NewSegment = false;
@@ -289,7 +292,7 @@ public class EditStoryActivity extends StoryActivity
 		}
 		else if (NewSegment)
 		{
-			setX();
+			setParallelLastSegment();
 			EditSegment.setText(LastSegmentTextView.getText().toString());
 			EditSegment.setSelection(EditSegment.length());
 		}
