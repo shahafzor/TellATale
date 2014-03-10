@@ -1,0 +1,59 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="right"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/textview_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/button_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="onClickLogin"
+        android:text="@string/button_login"
+        android:visibility="visible" />
+
+    <Button
+        android:id="@+id/button_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="onClickLogout"
+        android:text="@string/button_logout"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/button_new_story"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="onClickNewStory"
+        android:text="@string/button_new_story"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/button_get_story"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="onClickGetStory"
+        android:text="@string/button_get_story"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/button_my_stories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="onClickMyStories"
+        android:text="@string/button_my_stories"
+        android:visibility="gone" />
+
+</LinearLayout>
