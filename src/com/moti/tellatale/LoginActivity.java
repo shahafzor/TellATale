@@ -118,6 +118,9 @@ public class LoginActivity extends StoryActivity
 		case HttpConnectionTask.STATUS_ILLEGAL_INPUT:
 			ErrorTextView.setText("illegal input");
 			break;
+		case HttpConnectionTask.STATUS_DUPLICATE_USER:
+			ErrorTextView.setText("username exists");
+			break;
 		default:
 			ErrorTextView.setText("some error");
 			break;

@@ -9,8 +9,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.moti.tellatale.R;
-
 /**
  * This activity is used to edit or continue an existing story.
  */
@@ -98,8 +96,12 @@ public class EditStoryActivity extends StoryActivity
 			int index = SharedPref.getInt(getString(R.string.pref_key_segment_index), -1);
 			if (index != -1)
 			{
-				ReceivedStory.setCurrentLastSeqNumberLocation(index);
-				lastSegmentText = ReceivedStory.getStorySegment(index).getText();
+				lastSegment = ReceivedStory.getStorySegment(index);
+				if (lastSegment != null)
+				{
+					ReceivedStory.setCurrentLastSeqNumberLocation(index);
+					lastSegmentText = lastSegment.getText();
+				}
 			}
 		}
 		
@@ -258,7 +260,7 @@ public class EditStoryActivity extends StoryActivity
 	 */
 	private void saveSegment()
 	{
-		if (EditSegment == null || EditSegment.getText().toString() == "")
+		if (EditSegment == null || EditSegment.getText().toString().equals(""))
 		{
 			return;
 		}
