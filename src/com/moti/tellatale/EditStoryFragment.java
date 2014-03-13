@@ -4,15 +4,17 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputFilter;
-import android.view.Menu;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 /**
  * This activity is used to edit or continue an existing story.
  */
-public class EditStoryActivity extends StoryActivity
+public class EditStoryFragment extends StoryFragment implements View.OnClickListener
 {
 	public final static int SEND = 1;
 	public final static int REJECT = 2;
@@ -30,9 +32,31 @@ public class EditStoryActivity extends StoryActivity
 	private EditText EditSegment;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
+	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		super.onCreate(savedInstanceState);
+		ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.activity_story, container, false);
+
+		EditSegment = (EditText)rootView.findViewById(R.id.edittext_add_segment);
+		StoryTextView = (TextView)rootView.findViewById(R.id.textview_story);
+		LastSegmentTextView = (TextView)rootView.findViewById(R.id.textview_last_segment);
+		Button button = (Button)rootView.findViewById(R.id.button_reject_story);
+		button.setOnClickListener(this);
+		button = (Button)rootView.findViewById(R.id.button_replace_story);
+		button.setOnClickListener(this);
+		button = (Button)rootView.findViewById(R.id.button_send_story);
+		button.setOnClickListener(this);
+		return rootView;
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState)
+	{
+		super.onActivityCreated(savedInstanceState);
+		
+		if (savedInstanceState != null)
+		{
+			return;
+		}
 		
 		String xmlStory = SharedPref.getString(getString(R.string.pref_key_temp_story), null);
 		if (xmlStory != null)
@@ -41,14 +65,13 @@ public class EditStoryActivity extends StoryActivity
 			if (ReceivedStory != null)
 			{
 				loadStory();
-				return;
 			}
 		}
 		
 		getStoryFromServer(SEND, null);
 	}
 	
-	protected void onPause()
+	public void onPause()
 	{
 		super.onPause();
 		saveSegment();
@@ -75,12 +98,8 @@ public class EditStoryActivity extends StoryActivity
 		String lastSegmentText = lastSegment.getText();
 		String storyText = ReceivedStory.getText();
 		
-		setContentView(R.layout.activity_story);
-		EditSegment = (EditText)findViewById(R.id.edittext_add_segment);
 		EditSegment.setFilters(new InputFilter[] {new InputFilter.LengthFilter(MAX_SEGMENT_LENGTH)});
-		StoryTextView = (TextView) findViewById(R.id.textview_story);
 		StoryTextView.setText(storyText);
-		LastSegmentTextView = (TextView) findViewById(R.id.textview_last_segment);
 		LastSegmentTextView.setTextColor(Color.RED);
 		
 		if (SharedPref.contains(getString(R.string.pref_key_saved_segment)))
@@ -127,11 +146,11 @@ public class EditStoryActivity extends StoryActivity
 			break;
 		case HttpConnectionTask.STATUS_RESPONSE_OK:
 			message(":-) Your story has been sent!");
-			clearActivity();
+			clearFragment();
 			break;
 		case HttpConnectionTask.STATUS_ILEGAL_SEGMENT:
 			message(":-( Ilegal story sent");
-			clearActivity();
+			clearFragment();
 			break;
 		case HttpConnectionTask.STATUS_NO_STORY_AVAILABLE:
 			message(":-( There is no story available at the momment");
@@ -156,7 +175,7 @@ public class EditStoryActivity extends StoryActivity
 	/**
 	 * Clears all the files that were created by the application
 	 */
-	public void clearActivity()
+	public void clearFragment()
 	{
 		Editor editor = SharedPref.edit();
 		editor.remove(getString(R.string.pref_key_temp_story));
@@ -192,14 +211,6 @@ public class EditStoryActivity extends StoryActivity
 		{
 			return null;
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.edit_story, menu);
-		return true;
 	}
 	
 	/**
@@ -243,14 +254,14 @@ public class EditStoryActivity extends StoryActivity
 	
 	public void onClickRejectButton(View button)
 	{
-		clearActivity();
+		clearFragment();
 		message("Loading a new story...");
 		getStoryFromServer(REJECT, ReceivedStory.getName());
 	}
 	
 	public void onClickReplaceButton(View button)
 	{
-		clearActivity();
+		clearFragment();
 		message("Loading a new story...");
 		getStoryFromServer(REPLACE, ReceivedStory.getName());
 	}
@@ -318,6 +329,23 @@ public class EditStoryActivity extends StoryActivity
 				LastSegmentTextView.setText(lastSegment.getText());
 				EditSegment.setText("");
 			}
+		}
+	}
+
+	@Override
+	public void onClick(View v)
+	{
+		switch (v.getId())
+		{
+		case R.id.button_reject_story:
+			onClickRejectButton(v);
+			break;
+		case R.id.button_replace_story:
+			onClickReplaceButton(v);
+			break;
+		case R.id.button_send_story:
+			onClickSendButton(v);
+			break;
 		}
 	}
 }

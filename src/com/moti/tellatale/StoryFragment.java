@@ -1,16 +1,14 @@
 package com.moti.tellatale;
 
-import com.moti.tellatale.R;
-
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.widget.TextView;
 
-public abstract class StoryActivity extends Activity implements IConnectionUser
+public abstract class StoryFragment extends Fragment implements IConnectionUser
 {
-	protected static final String SERVER_URL = "http://www.motik.dx.am/";
+	//protected static final String SERVER_URL = "http://www.motik.dx.am/";
 	protected static final String SERVER_SEND_URL = "send_story.php";
 	protected static final String SERVER_RECEIVE_URL = "receive_story.php";
 	protected static final String SERVER_SEND_MY_STORIES_URL = "send_my_stories.php";
@@ -18,10 +16,11 @@ public abstract class StoryActivity extends Activity implements IConnectionUser
 	protected static final String NEW_USER_URL = "add_user.php";
 	
 	
-	//public static final String SERVER_URL = "http://10.0.2.2/TellATale/";
+	public static final String SERVER_URL = "http://10.0.2.2/TellATale/";
 	public static final int BUFFER_SIZE = 1024;
 	public static final int MAX_SEGMENT_LENGTH = 150;
 	protected SharedPreferences SharedPref;
+	protected MainActivity ParentActivity;
 
 	/**
 	 * A callback function that is called by the async task 'HttpConnectionTask' when
@@ -32,10 +31,39 @@ public abstract class StoryActivity extends Activity implements IConnectionUser
 	public abstract void connectionFinished(int requestStatus, String response);
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try
+		{
+			//mCallback = (OnHeadlineSelectedListener) activity;
+		} 
+		catch (ClassCastException e)
+		{
+			throw new ClassCastException(activity.toString()
+					+ " must implement OnHeadlineSelectedListener");
+		}
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		SharedPref = getSharedPreferences(getString(R.string.pref_file_name), MODE_PRIVATE);
+		setRetainInstance(true);
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState)
+	{
+		super.onActivityCreated(savedInstanceState);
+		if (savedInstanceState == null)
+		{
+			ParentActivity = (MainActivity)getActivity();
+			SharedPref = ParentActivity.getSharedPref();
+		}
 	}
 	
 	protected void sendStory(Story story)
@@ -47,7 +75,7 @@ public abstract class StoryActivity extends Activity implements IConnectionUser
 	
 	protected void sendHttp(String url, String output)
 	{
-		if (MainActivity.checkConnection(this))
+		if (MainActivity.checkConnection(ParentActivity))
 		{
 			HttpConnectionTask conn = new HttpConnectionTask(this);
 			conn.execute(url, output);
@@ -88,8 +116,8 @@ public abstract class StoryActivity extends Activity implements IConnectionUser
 	
 	protected void message(String msg)
 	{
-		TextView textview = new TextView(this);
-		textview.setText(msg);
-		setContentView(textview);
+		//TextView textview = new TextView(this);
+		//textview.setText(msg);
+		//setContentView(textview);
 	}
 }

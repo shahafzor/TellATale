@@ -30,12 +30,12 @@ class HttpConnectionTask extends AsyncTask<String, Void, String>
 	public static final int STATUS_ERROR_STRING_CONVERT = 102;
 	public static final int STATUS_ERROR_TIMEOUT = 103;
 	
-	private StoryActivity ParentActivity;
+	private IConnectionUser ParentUser;
 	private int RequestStatus = STATUS_APP_ERROR;
 
-	public HttpConnectionTask(StoryActivity activity)
+	public HttpConnectionTask(IConnectionUser parent)
 	{
-		this.ParentActivity = activity;
+		ParentUser = parent;
 	}
 
 	@Override
@@ -59,7 +59,7 @@ class HttpConnectionTask extends AsyncTask<String, Void, String>
 	
 	protected void onPostExecute(String response)
 	{
-        ParentActivity.connectionFinished(RequestStatus, response);
+        ParentUser.connectionFinished(RequestStatus, response);
     }
 
 	private String sendRequest(String serverUrl, String output) throws IOException, SocketTimeoutException

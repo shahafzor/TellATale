@@ -1,5 +1,6 @@
 package com.moti.tellatale;
 
+import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -108,6 +109,8 @@ public class LoginActivity extends StoryActivity
 				editor.putInt(getString(R.string.pref_key_user_permission), permission);
 				editor.commit();   
 				setResult(RESULT_OK, null);
+				Intent intent = new Intent(this, MainActivity.class);
+				startActivity(intent);
 				finish();
 				break;
 			}

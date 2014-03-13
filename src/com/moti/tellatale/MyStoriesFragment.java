@@ -3,58 +3,76 @@ package com.moti.tellatale;
 import java.util.List;
 
 import android.os.Bundle;
-import android.view.Menu;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.moti.tellatale.R;
-
-public class MyStoriesActivity extends StoryActivity
+public class MyStoriesFragment extends StoryFragment implements View.OnClickListener
 {
 	private static final String StoriesXmlKey = "StoriesXmlKey";
 	private static final String CurrentIndexKey = "CurrentIndexKey";
 	private String StoriesXml;
 	private List<Story> Stories;
 	private int CurrentIndex = 0;
-	TextView StoryTextView;
+	private TextView StoryTextView;
+	private Button ButtonNext;
+	private Button ButtonPrev;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		super.onCreate(savedInstanceState);
+		View rootView = inflater.inflate(R.layout.activity_my_stories, container, false);
+		if (savedInstanceState == null)
+		{
+			StoryTextView = (TextView)rootView.findViewById(R.id.textview_story);
+			ButtonNext = (Button)rootView.findViewById(R.id.button_next);
+			ButtonPrev = (Button)rootView.findViewById(R.id.button_prev);
+		}
+
+		return rootView;
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState)
+	{
+		super.onActivityCreated(savedInstanceState);
 		
 		if (savedInstanceState == null)
 		{
 			message("Getting your stories...");
 			getMyStoriesFromServer();
 		}
+		else
+		{
+			StoriesXml = savedInstanceState.getString(StoriesXmlKey);
+			CurrentIndex = savedInstanceState.getInt(CurrentIndexKey);
+			loadStories();
+		}
 	}
 	
 	@Override
-	protected void onSaveInstanceState (Bundle savedInstanceState)
+	public void onSaveInstanceState (Bundle savedInstanceState)
 	{
 		savedInstanceState.putString(StoriesXmlKey, StoriesXml);
 		savedInstanceState.putInt(CurrentIndexKey, CurrentIndex);
 		
 		super.onSaveInstanceState(savedInstanceState);
 	}
-	
-	@Override
-	protected void onRestoreInstanceState (Bundle savedInstanceState)
-	{
-		super.onRestoreInstanceState(savedInstanceState);
-		
-		StoriesXml = savedInstanceState.getString(StoriesXmlKey);
-		CurrentIndex = savedInstanceState.getInt(CurrentIndexKey);
-		loadStories();
-	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
+	public void onClick(View v)
 	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.my_stories, menu);
-		return true;
+		switch (v.getId())
+		{
+		case R.id.button_next:
+			onClickNextStory(v);
+			break;
+		case R.id.button_prev:
+			onClickPrevStory(v);
+			break;
+		}
 	}
 
 	@Override
@@ -80,12 +98,14 @@ public class MyStoriesActivity extends StoryActivity
 		Stories = parseXml(StoriesXml);
 		if (Stories != null && Stories.size() > 0)
 		{
-			setContentView(R.layout.activity_my_stories);
-			StoryTextView = (TextView) findViewById(R.id.textview_story);
 			try
 			{
 				Story story = Stories.get(CurrentIndex);
 				StoryTextView.setText(story.getText());
+				ButtonPrev.setOnClickListener(this);
+				ButtonNext.setOnClickListener(this);
+				ButtonPrev.setEnabled(true);
+				ButtonNext.setEnabled(true);
 			}
 			catch (IndexOutOfBoundsException e)
 			{
@@ -112,7 +132,7 @@ public class MyStoriesActivity extends StoryActivity
 		sendHttp(url, null);
 	}
 	
-	public void onClickNextStory(View sendButton)
+	private void onClickNextStory(View sendButton)
 	{
 		if (Stories != null && CurrentIndex < Stories.size() - 1)
 		{
@@ -121,7 +141,7 @@ public class MyStoriesActivity extends StoryActivity
 		}
 	}
 	
-	public void onClickPrevStory(View sendButton)
+	private void onClickPrevStory(View sendButton)
 	{
 		if (Stories != null && CurrentIndex > 0)
 		{

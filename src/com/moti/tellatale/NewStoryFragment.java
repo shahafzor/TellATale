@@ -2,23 +2,49 @@ package com.moti.tellatale;
 
 import android.os.Bundle;
 import android.text.InputFilter;
-import android.view.Menu;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
-import com.moti.tellatale.R;
-
-public class NewStoryActivity extends StoryActivity
+public class NewStoryFragment extends StoryFragment implements View.OnClickListener
 {
 	private EditText EdittextNewStory;
+	
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState)
 	{
+		Log.d("sha", "NewStoryFragment/onCreate");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_new_story);
+	}
+	
+	@Override
+	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		View rootView = inflater.inflate(R.layout.activity_new_story, container, false);
+
+		if (savedInstanceState == null)
+		{
+			EdittextNewStory = (EditText)rootView.findViewById(R.id.edittext_new_story);
+			EdittextNewStory.setFilters(new InputFilter[] {new InputFilter.LengthFilter(MAX_SEGMENT_LENGTH)});
+			Button button = (Button)rootView.findViewById(R.id.button_send_story);
+			button.setOnClickListener(this);
+		}
+
+		return rootView;
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState)
+	{
+		super.onActivityCreated(savedInstanceState);
 		
-		EdittextNewStory = (EditText) findViewById(R.id.edittext_new_story);
-		EdittextNewStory.setFilters(new InputFilter[] {new InputFilter.LengthFilter(MAX_SEGMENT_LENGTH)});
+		if (savedInstanceState != null)
+		{
+			return;
+		}
 		
 		if (SharedPref.contains(getString(R.string.pref_key_saved_new_story_segment)))
 		{
@@ -27,25 +53,20 @@ public class NewStoryActivity extends StoryActivity
 		}
 	}
 	
-	protected void onPause()
+	public void onPause()
 	{
 		super.onPause();
-		if (EdittextNewStory != null)
+		
+		if (EdittextNewStory == null || EdittextNewStory.getText().toString().equals(""))
 		{
-			String storyString = EdittextNewStory.getText().toString();
-			saveString(storyString, getString(R.string.pref_key_saved_new_story_segment));
-		}	
-	}
+			return;
+		}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.add_story, menu);
-		return true;
+		String storyString = EdittextNewStory.getText().toString();
+		saveString(storyString, getString(R.string.pref_key_saved_new_story_segment));
 	}
 	
-	public void onClickSendButton(View sendButton)
+	private void onClickSendButton(View sendButton)
 	{
 		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
 		String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
@@ -80,6 +101,17 @@ public class NewStoryActivity extends StoryActivity
 			break;
 		default:
 			message("Something..." + response);
+		}
+	}
+
+	@Override
+	public void onClick(View v)
+	{
+		switch (v.getId())
+		{
+		case R.id.button_send_story:
+			onClickSendButton(v);
+			break;
 		}
 	}
 }
