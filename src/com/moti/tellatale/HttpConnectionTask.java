@@ -30,6 +30,8 @@ class HttpConnectionTask extends AsyncTask<String, Void, String>
 	public static final int STATUS_ERROR_STRING_CONVERT = 102;
 	public static final int STATUS_ERROR_TIMEOUT = 103;
 	
+	public static final int BUFFER_SIZE = 1024;
+	
 	private IConnectionUser ParentUser;
 	private int RequestStatus = STATUS_APP_ERROR;
 
@@ -125,7 +127,7 @@ class HttpConnectionTask extends AsyncTask<String, Void, String>
 	{
 		try
 		{
-			char[] buffer = new char[StoryActivity.BUFFER_SIZE];
+			char[] buffer = new char[BUFFER_SIZE];
 			int length = 0;
 			String response = new String();
 			Reader reader = new InputStreamReader(stream, "UTF-8");

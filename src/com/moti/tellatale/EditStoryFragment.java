@@ -1,9 +1,11 @@
 package com.moti.tellatale;
 
+import android.app.Activity;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +22,18 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 	public final static int REJECT = 2;
 	public final static int REPLACE = 3;
 	
+	private static final String KeyTmpStory = "tmp story";
+	private static final String KeySavedSegment = "saved segment";
+	private static final String KeySegmentIndex = "segment index";
+	private static final String KeyIsParallelSegment = "is it parallel";
+	
 	// The story object that will be edited or continued
 	private Story ReceivedStory;
 	
 	// Indicates if the user adds a new segment to the story or edits the last segment
 	private boolean NewSegment = true;
+	
+	private boolean StorySent = false;
 	
 	// Views that will be used throughout the activity 
 	private TextView StoryTextView;
@@ -32,9 +41,16 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 	private EditText EditSegment;
 	
 	@Override
-	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public void onAttach(Activity activity)
 	{
-		ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.activity_story, container, false);
+		super.onAttach(activity);
+		//TmpStoryKey = getString(R.string.pref_key_temp_story);
+	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_edit_story, container, false);
 
 		EditSegment = (EditText)rootView.findViewById(R.id.edittext_add_segment);
 		StoryTextView = (TextView)rootView.findViewById(R.id.textview_story);
@@ -44,6 +60,10 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 		button = (Button)rootView.findViewById(R.id.button_replace_story);
 		button.setOnClickListener(this);
 		button = (Button)rootView.findViewById(R.id.button_send_story);
+		button.setOnClickListener(this);
+		button = (Button)rootView.findViewById(R.id.button_next_segment);
+		button.setOnClickListener(this);
+		button = (Button)rootView.findViewById(R.id.button_prev_segment);
 		button.setOnClickListener(this);
 		return rootView;
 	}
@@ -58,13 +78,14 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 			return;
 		}
 		
-		String xmlStory = SharedPref.getString(getString(R.string.pref_key_temp_story), null);
+		String xmlStory = SharedPref.getString(KeyTmpStory, null);
 		if (xmlStory != null)
 		{
 			ReceivedStory = parseXml(xmlStory);
 			if (ReceivedStory != null)
 			{
 				loadStory();
+				return;
 			}
 		}
 		
@@ -102,17 +123,17 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 		StoryTextView.setText(storyText);
 		LastSegmentTextView.setTextColor(Color.RED);
 		
-		if (SharedPref.contains(getString(R.string.pref_key_saved_segment)))
+		if (SharedPref.contains(KeySavedSegment))
 		{
-			EditSegment.setText(SharedPref.getString(getString(R.string.pref_key_saved_segment), ""));
+			EditSegment.setText(SharedPref.getString(KeySavedSegment, ""));
 			EditSegment.setSelection(EditSegment.length());
 
-			if (SharedPref.getBoolean(getString(R.string.pref_key_is_parallel_segment), false))
+			if (SharedPref.getBoolean(KeyIsParallelSegment, false))
 			{
 				setParallelLastSegment();
 			}
 			
-			int index = SharedPref.getInt(getString(R.string.pref_key_segment_index), -1);
+			int index = SharedPref.getInt(KeySegmentIndex, -1);
 			if (index != -1)
 			{
 				lastSegment = ReceivedStory.getStorySegment(index);
@@ -127,25 +148,39 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 		LastSegmentTextView.setText(lastSegmentText);
 	}
 	
+	private void handleReceivedStory(String story)
+	{
+		ReceivedStory = parseXml(story);
+		if (ReceivedStory != null)
+		{
+			saveString(story, KeyTmpStory);
+			if (isVisible())
+			{
+				loadStory();
+			}
+			else
+			{
+				Log.d("sha", "connectionFinished not visible");
+			}
+			
+		}
+		else
+		{
+			message("Illegal story received");
+		}
+	}
+	
 	@Override
 	public void connectionFinished(int requestStatus, String response)
 	{
 		switch (requestStatus)
 		{
 		case HttpConnectionTask.STATUS_XML_OK:
-			ReceivedStory = parseXml(response);
-			if (ReceivedStory != null)
-			{
-				saveString(response, getString(R.string.pref_key_temp_story));
-				loadStory();
-			}
-			else
-			{
-				message("Illegal story received");
-			}
+			handleReceivedStory(response);
 			break;
 		case HttpConnectionTask.STATUS_RESPONSE_OK:
 			message(":-) Your story has been sent!");
+			StorySent = true;
 			clearFragment();
 			break;
 		case HttpConnectionTask.STATUS_ILEGAL_SEGMENT:
@@ -178,10 +213,10 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 	public void clearFragment()
 	{
 		Editor editor = SharedPref.edit();
-		editor.remove(getString(R.string.pref_key_temp_story));
-		editor.remove(getString(R.string.pref_key_saved_segment));
-		editor.remove(getString(R.string.pref_key_is_parallel_segment));
-		editor.remove(getString(R.string.pref_key_segment_index));
+		editor.remove(KeyTmpStory);
+		editor.remove(KeySavedSegment);
+		editor.remove(KeyIsParallelSegment);
+		editor.remove(KeySegmentIndex);
 		editor.commit();
 		
 		// make sure EditSegment's text will not be saved when activity ends
@@ -220,8 +255,9 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
  	 */
 	private void getStoryFromServer(int action, String storyName)
 	{
+		Log.d("sha", "EditStoryFragment.getStoryFromServer");
 		message("Loading story...");
-		String url = SERVER_URL + SERVER_SEND_URL;
+		String url = ServerUrls.SERVER_URL + ServerUrls.SERVER_SEND_URL;
 		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
 		String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
 		String credentials = "username=" + userName + "&password=" + password;
@@ -235,6 +271,11 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 
 	public void onClickSendButton(View sendButton)
 	{
+		if (StorySent)
+		{
+			return;
+		}
+		
 		StorySegment segment = null;
 		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
 		String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
@@ -271,22 +312,22 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 	 */
 	private void saveSegment()
 	{
-		if (EditSegment == null || EditSegment.getText().toString().equals(""))
+		if (StorySent || EditSegment == null)
 		{
 			return;
 		}
 		
 		String storyString = EditSegment.getText().toString();
-		saveString(storyString, getString(R.string.pref_key_saved_segment));
+		saveString(storyString, KeySavedSegment);
 		if (!NewSegment)
 		{
-			saveBoolean(true, getString(R.string.pref_key_is_parallel_segment));
+			saveBoolean(true, KeyIsParallelSegment);
 		}
 		else
 		{
-			saveBoolean(false, getString(R.string.pref_key_is_parallel_segment));
+			saveBoolean(false, KeyIsParallelSegment);
 		}
-		saveInt(ReceivedStory.getCurrentLastSeqNumberLocation(), getString(R.string.pref_key_segment_index));
+		saveInt(ReceivedStory.getCurrentLastSeqNumberLocation(), KeySegmentIndex);
 	}
 	
 	private void setParallelLastSegment()
@@ -345,6 +386,12 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 			break;
 		case R.id.button_send_story:
 			onClickSendButton(v);
+			break;
+		case R.id.button_next_segment:
+			onClickNextSeg(v);
+			break;
+		case R.id.button_prev_segment:
+			onClickPrevSeg(v);
 			break;
 		}
 	}

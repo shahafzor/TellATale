@@ -1,13 +1,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:gravity="center" >
 
     <Button
         android:id="@+id/button_new_story"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:onClick="onClickMenuButton"
         android:text="@string/button_new_story" />
 
@@ -15,7 +15,6 @@
         android:id="@+id/button_get_story"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:onClick="onClickMenuButton"
         android:text="@string/button_get_story" />
 
@@ -23,7 +22,6 @@
         android:id="@+id/button_my_stories"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:onClick="onClickMenuButton"
         android:text="@string/button_my_stories" />
 

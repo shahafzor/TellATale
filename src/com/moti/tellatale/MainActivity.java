@@ -1,20 +1,16 @@
 package com.moti.tellatale;
 
-import android.app.Activity;
-import android.content.Context;
+//import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.support.v4.app.FragmentActivity;
 
-public class MainActivity extends Activity
+public class MainActivity extends FragmentActivity
 {
 	private SharedPreferences SharedPref;
 	
@@ -42,9 +38,13 @@ public class MainActivity extends Activity
 			// Set the activity layout
 			setContentView(R.layout.activity_main);
 
-			// Add the menu fragment
-			MenuFragment fragment = new MenuFragment();
-			getFragmentManager().beginTransaction().add(R.id.frame_menu, fragment).commit();
+			if (savedInstanceState == null)
+			{
+				// Add the menu fragment
+				MenuFragment fragment = new MenuFragment();
+				getSupportFragmentManager().beginTransaction().add(R.id.frame_menu, fragment).commit();
+				//getFragmentManager().beginTransaction().add(R.id.frame_menu, fragment).commit();
+			}
 		}
 	}
 
@@ -72,18 +72,8 @@ public class MainActivity extends Activity
 	
 	private void startLoginActivity()
 	{
-		if (checkConnection(this))
-		{
-			Intent intent = new Intent(this, LoginActivity.class);
-			startActivity(intent);
-		}
-		else
-		{
-			TextView textView = new TextView(this);
-    		textView.setTextSize(20);
-            textView.setText("No network connection available");
-            setContentView(textView);
-		}
+		Intent intent = new Intent(this, LoginActivity.class);
+		startActivity(intent);
 	}
 	
 	public void onClickMenuButton(View button)
@@ -103,7 +93,11 @@ public class MainActivity extends Activity
 			break;
 		}
 
-		getFragmentManager().beginTransaction().replace(R.id.frame_main, fragment).commit();
+		if (fragment != null)
+		{
+			getSupportFragmentManager().beginTransaction().replace(R.id.frame_main, fragment).commit();
+			//getFragmentManager().beginTransaction().replace(R.id.frame_main, fragment).commit();
+		}
 	}
 	
 	public void logout()
@@ -115,19 +109,6 @@ public class MainActivity extends Activity
 	
 	private void clearFiles()
 	{
-		Editor editor = SharedPref.edit();
-		editor.clear();
-		editor.commit();
-	}
-	
-	public static boolean checkConnection(Activity activity)
-	{
-		ConnectivityManager connMgr = (ConnectivityManager)activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (connMgr == null)
-		{
-			return false;
-		}
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
+		SharedPref.edit().clear().commit();
 	}
 }

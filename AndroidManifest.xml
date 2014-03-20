@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="8"
         android:targetSdkVersion="19" />
 
     <application
@@ -28,18 +28,6 @@
         <activity
             android:name="com.moti.tellatale.LoginActivity"
             android:label="@string/title_activity_login" >
-        </activity>
-        <activity
-            android:name="com.moti.tellatale.NewStoryActivity"
-            android:label="@string/title_activity_new_story" >
-        </activity>
-        <activity
-            android:name="com.moti.tellatale.EditStoryActivity"
-            android:label="@string/title_activity_edit_story" >
-        </activity>
-        <activity
-            android:name="com.moti.tellatale.MyStoriesActivity"
-            android:label="@string/title_activity_my_stories" >
         </activity>
     </application>
 

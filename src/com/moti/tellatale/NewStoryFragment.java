@@ -11,19 +11,22 @@ import android.widget.EditText;
 
 public class NewStoryFragment extends StoryFragment implements View.OnClickListener
 {
+	private static final String KeyNewStory = "new story";
+	
 	private EditText EdittextNewStory;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		Log.d("sha", "NewStoryFragment/onCreate");
+		Log.d("sha", "NewStoryFragment.onCreate");
 		super.onCreate(savedInstanceState);
 	}
 	
 	@Override
-	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		View rootView = inflater.inflate(R.layout.activity_new_story, container, false);
+		Log.d("sha", "NewStoryFragment.onCreateView");
+		View rootView = inflater.inflate(R.layout.fragment_new_story, container, false);
 
 		if (savedInstanceState == null)
 		{
@@ -39,6 +42,7 @@ public class NewStoryFragment extends StoryFragment implements View.OnClickListe
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
+		Log.d("sha", "NewStoryFragment.onActivityCreated");
 		super.onActivityCreated(savedInstanceState);
 		
 		if (savedInstanceState != null)
@@ -46,24 +50,26 @@ public class NewStoryFragment extends StoryFragment implements View.OnClickListe
 			return;
 		}
 		
-		if (SharedPref.contains(getString(R.string.pref_key_saved_new_story_segment)))
+		String savedStory = SharedPref.getString(KeyNewStory, "");
+		if (!savedStory.equals(""))
 		{
-			EdittextNewStory.setText(SharedPref.getString(getString(R.string.pref_key_saved_new_story_segment), ""));
+			EdittextNewStory.setText(savedStory);
 			EdittextNewStory.setSelection(EdittextNewStory.length());
 		}
 	}
 	
 	public void onPause()
 	{
+		Log.d("sha", "NewStoryFragment.onPause");
 		super.onPause();
 		
-		if (EdittextNewStory == null || EdittextNewStory.getText().toString().equals(""))
+		if (EdittextNewStory == null)
 		{
 			return;
 		}
 
 		String storyString = EdittextNewStory.getText().toString();
-		saveString(storyString, getString(R.string.pref_key_saved_new_story_segment));
+		saveString(storyString, KeyNewStory);
 	}
 	
 	private void onClickSendButton(View sendButton)
@@ -86,8 +92,7 @@ public class NewStoryFragment extends StoryFragment implements View.OnClickListe
 		switch (requestStatus)
 		{
 		case HttpConnectionTask.STATUS_RESPONSE_OK:
-			removeString(getString(R.string.pref_key_saved_new_story_segment));
-			EdittextNewStory = null;
+			EdittextNewStory.setText("");
 			message(":-) Your story has been sent!");
 			break;
 		case HttpConnectionTask.STATUS_SERVER_ERROR:

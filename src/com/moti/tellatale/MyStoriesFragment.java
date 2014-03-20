@@ -23,7 +23,7 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		View rootView = inflater.inflate(R.layout.activity_my_stories, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_my_stories, container, false);
 		if (savedInstanceState == null)
 		{
 			StoryTextView = (TextView)rootView.findViewById(R.id.textview_story);
@@ -67,10 +67,10 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 		switch (v.getId())
 		{
 		case R.id.button_next:
-			onClickNextStory(v);
+			nextStory();
 			break;
 		case R.id.button_prev:
-			onClickPrevStory(v);
+			prevStory();
 			break;
 		}
 	}
@@ -124,7 +124,7 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
  	 */
 	private void getMyStoriesFromServer()
 	{
-		String url = SERVER_URL + SERVER_SEND_MY_STORIES_URL;
+		String url = ServerUrls.SERVER_URL + ServerUrls.SERVER_SEND_MY_STORIES_URL;
 		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
 		String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
 		String credentials = "username=" + userName + "&password=" + password;
@@ -132,7 +132,7 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 		sendHttp(url, null);
 	}
 	
-	private void onClickNextStory(View sendButton)
+	private void nextStory()
 	{
 		if (Stories != null && CurrentIndex < Stories.size() - 1)
 		{
@@ -141,7 +141,7 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 		}
 	}
 	
-	private void onClickPrevStory(View sendButton)
+	private void prevStory()
 	{
 		if (Stories != null && CurrentIndex > 0)
 		{
