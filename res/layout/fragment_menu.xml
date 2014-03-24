@@ -1,28 +1,43 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center" >
+    android:gravity="bottom|center_horizontal"
+    android:orientation="horizontal" >
 
     <Button
         android:id="@+id/button_new_story"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:background="@android:color/transparent"
+        android:drawableTop="@drawable/button_new_story"
         android:onClick="onClickMenuButton"
-        android:text="@string/button_new_story" />
+        android:text="@string/button_new_story"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
 
     <Button
         android:id="@+id/button_get_story"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:background="@android:color/transparent"
+        android:drawableTop="@drawable/button_get_story"
         android:onClick="onClickMenuButton"
-        android:text="@string/button_get_story" />
+        android:text="@string/button_get_story"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
 
     <Button
         android:id="@+id/button_my_stories"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:drawableTop="@drawable/button_my_stories"
         android:onClick="onClickMenuButton"
-        android:text="@string/button_my_stories" />
+        android:text="@string/button_my_stories"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
 
 </LinearLayout>

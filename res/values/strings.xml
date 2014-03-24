@@ -24,5 +24,8 @@
     <string name="edittext_hint_login_password">password</string>
     <string name="error_msg_password">6&#8211;12 letters and numbers</string>
     <string name="error_msg_username">3&#8211;12 letters and numbers</string>
+    <string name="imageview_logo">logo image</string>
+    <string name="message_loading_stories">Loading your stories</string>
+    <string name="message_loading_story">Loading a story</string>
 
 </resources>

@@ -3,12 +3,14 @@ package com.moti.tellatale;
 //import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.support.v4.app.FragmentActivity;
+import android.widget.Button;
 
 public class MainActivity extends FragmentActivity
 {
@@ -33,7 +35,10 @@ public class MainActivity extends FragmentActivity
 		}
 		else
 		{
-			//getActionBar().hide();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			{
+				getActionBar().hide();
+			}
 
 			// Set the activity layout
 			setContentView(R.layout.activity_main);
@@ -43,6 +48,9 @@ public class MainActivity extends FragmentActivity
 				// Add the menu fragment
 				MenuFragment fragment = new MenuFragment();
 				getSupportFragmentManager().beginTransaction().add(R.id.frame_menu, fragment).commit();
+				
+				EmptyFragment fragment2 = new EmptyFragment();
+				getSupportFragmentManager().beginTransaction().add(R.id.frame_main, fragment2).commit();
 				//getFragmentManager().beginTransaction().add(R.id.frame_menu, fragment).commit();
 			}
 		}
@@ -76,9 +84,20 @@ public class MainActivity extends FragmentActivity
 		startActivity(intent);
 	}
 	
+	private void enableButtons()
+	{
+		Button b = (Button)findViewById(R.id.button_get_story);
+		b.setEnabled(true);
+		b = (Button)findViewById(R.id.button_my_stories);
+		b.setEnabled(true);
+		b = (Button)findViewById(R.id.button_new_story);
+		b.setEnabled(true);
+	}
+	
 	public void onClickMenuButton(View button)
 	{
 		StoryFragment fragment = null;
+		enableButtons();
 		
 		switch (button.getId())
 		{
@@ -96,7 +115,7 @@ public class MainActivity extends FragmentActivity
 		if (fragment != null)
 		{
 			getSupportFragmentManager().beginTransaction().replace(R.id.frame_main, fragment).commit();
-			//getFragmentManager().beginTransaction().replace(R.id.frame_main, fragment).commit();
+			button.setEnabled(false);
 		}
 	}
 	

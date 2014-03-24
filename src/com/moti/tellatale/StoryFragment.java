@@ -1,12 +1,14 @@
 package com.moti.tellatale;
 
 import android.app.Activity;
-//import android.app.Fragment;
-import android.support.v4.app.Fragment;
+import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.widget.TextView;
+//import android.app.Fragment;
 
 public abstract class StoryFragment extends Fragment implements IConnectionUser
 {
@@ -46,11 +48,8 @@ public abstract class StoryFragment extends Fragment implements IConnectionUser
 	{
 		Log.d("sha", "StroyFragment.onActivityCreated");
 		super.onActivityCreated(savedInstanceState);
-		if (savedInstanceState == null)
-		{
-			setRetainInstance(true);
-			SharedPref = ParentActivity.getSharedPref();
-		}
+		
+		SharedPref = ParentActivity.getSharedPref();
 	}
 	
 	public void sendHttp(String url, String output)
@@ -104,9 +103,10 @@ public abstract class StoryFragment extends Fragment implements IConnectionUser
 	
 	protected void message(String msg)
 	{
-		// TODO
-		//TextView textview = new TextView(this);
-		//textview.setText(msg);
-		//setContentView(textview);
+		Dialog dialog = new Dialog(ParentActivity);
+		TextView text = new TextView(ParentActivity);
+		text.setText(msg);
+		dialog.setContentView(text);
+		dialog.show();
 	}
 }

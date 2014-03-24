@@ -44,7 +44,6 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 	public void onAttach(Activity activity)
 	{
 		super.onAttach(activity);
-		//TmpStoryKey = getString(R.string.pref_key_temp_story);
 	}
 	
 	@Override
@@ -52,6 +51,16 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 	{
 		ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_edit_story, container, false);
 
+		
+		return rootView;
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState)
+	{
+		super.onActivityCreated(savedInstanceState);
+		
+		View rootView = getView();
 		EditSegment = (EditText)rootView.findViewById(R.id.edittext_add_segment);
 		StoryTextView = (TextView)rootView.findViewById(R.id.textview_story);
 		LastSegmentTextView = (TextView)rootView.findViewById(R.id.textview_last_segment);
@@ -65,18 +74,6 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 		button.setOnClickListener(this);
 		button = (Button)rootView.findViewById(R.id.button_prev_segment);
 		button.setOnClickListener(this);
-		return rootView;
-	}
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
-		
-		if (savedInstanceState != null)
-		{
-			return;
-		}
 		
 		String xmlStory = SharedPref.getString(KeyTmpStory, null);
 		if (xmlStory != null)
@@ -115,6 +112,9 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 			message("Have a nice day :-(");
 			return;
 		}
+		
+		getView().findViewById(R.id.layout_loading).setVisibility(View.GONE);
+		getView().findViewById(R.id.layout_main).setVisibility(View.VISIBLE);
 		
 		String lastSegmentText = lastSegment.getText();
 		String storyText = ReceivedStory.getText();
@@ -256,7 +256,6 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 	private void getStoryFromServer(int action, String storyName)
 	{
 		Log.d("sha", "EditStoryFragment.getStoryFromServer");
-		message("Loading story...");
 		String url = ServerUrls.SERVER_URL + ServerUrls.SERVER_SEND_URL;
 		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
 		String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
@@ -296,14 +295,16 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 	public void onClickRejectButton(View button)
 	{
 		clearFragment();
-		message("Loading a new story...");
+		getView().findViewById(R.id.layout_loading).setVisibility(View.VISIBLE);
+		getView().findViewById(R.id.layout_main).setVisibility(View.GONE);
 		getStoryFromServer(REJECT, ReceivedStory.getName());
 	}
 	
 	public void onClickReplaceButton(View button)
 	{
 		clearFragment();
-		message("Loading a new story...");
+		getView().findViewById(R.id.layout_loading).setVisibility(View.VISIBLE);
+		getView().findViewById(R.id.layout_main).setVisibility(View.GONE);
 		getStoryFromServer(REPLACE, ReceivedStory.getName());
 	}
 	
@@ -312,7 +313,7 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 	 */
 	private void saveSegment()
 	{
-		if (StorySent || EditSegment == null)
+		if (StorySent || EditSegment == null || ReceivedStory == null)
 		{
 			return;
 		}

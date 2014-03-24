@@ -2,7 +2,9 @@ package com.moti.tellatale;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +15,7 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 {
 	private static final String StoriesXmlKey = "StoriesXmlKey";
 	private static final String CurrentIndexKey = "CurrentIndexKey";
-	private String StoriesXml;
+	private String StoriesXml = null;
 	private List<Story> Stories;
 	private int CurrentIndex = 0;
 	private TextView StoryTextView;
@@ -21,17 +23,16 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 	private Button ButtonPrev;
 	
 	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		View rootView = inflater.inflate(R.layout.fragment_my_stories, container, false);
-		if (savedInstanceState == null)
-		{
-			StoryTextView = (TextView)rootView.findViewById(R.id.textview_story);
-			ButtonNext = (Button)rootView.findViewById(R.id.button_next);
-			ButtonPrev = (Button)rootView.findViewById(R.id.button_prev);
-		}
-
-		return rootView;
+		View v = inflater.inflate(R.layout.fragment_my_stories, container, false);
+		return v;
 	}
 	
 	@Override
@@ -39,9 +40,15 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 	{
 		super.onActivityCreated(savedInstanceState);
 		
-		if (savedInstanceState == null)
+		View rootView = getView();
+		StoryTextView = (TextView)rootView.findViewById(R.id.textview_story);
+		ButtonNext = (Button)rootView.findViewById(R.id.button_next);
+		ButtonPrev = (Button)rootView.findViewById(R.id.button_prev);
+		ButtonPrev.setOnClickListener(this);
+		ButtonNext.setOnClickListener(this);
+		
+		if (savedInstanceState == null || savedInstanceState.getString(StoriesXmlKey) == null)
 		{
-			message("Getting your stories...");
 			getMyStoriesFromServer();
 		}
 		else
@@ -53,11 +60,14 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 	}
 	
 	@Override
-	public void onSaveInstanceState (Bundle savedInstanceState)
+	public void onSaveInstanceState(Bundle savedInstanceState)
 	{
-		savedInstanceState.putString(StoriesXmlKey, StoriesXml);
-		savedInstanceState.putInt(CurrentIndexKey, CurrentIndex);
-		
+		if (StoriesXml != null)
+		{
+			savedInstanceState.putString(StoriesXmlKey, StoriesXml);
+			savedInstanceState.putInt(CurrentIndexKey, CurrentIndex);
+		}
+
 		super.onSaveInstanceState(savedInstanceState);
 	}
 
@@ -78,6 +88,12 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 	@Override
 	public void connectionFinished(int requestStatus, String response)
 	{
+		if (!isVisible())
+		{
+			Log.d("sha", "MyStroiesFragment.connectionFinished not added");
+			return;
+		}
+		
 		if (requestStatus == HttpConnectionTask.STATUS_XML_OK)
 		{
 			StoriesXml = response;
@@ -95,6 +111,8 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 	
 	private void loadStories()
 	{
+		getView().findViewById(R.id.layout_loading).setVisibility(View.GONE);
+		getView().findViewById(R.id.layout_main).setVisibility(View.VISIBLE);
 		Stories = parseXml(StoriesXml);
 		if (Stories != null && Stories.size() > 0)
 		{
@@ -102,10 +120,7 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 			{
 				Story story = Stories.get(CurrentIndex);
 				StoryTextView.setText(story.getText());
-				ButtonPrev.setOnClickListener(this);
-				ButtonNext.setOnClickListener(this);
-				ButtonPrev.setEnabled(true);
-				ButtonNext.setEnabled(true);
+				getView().findViewById(R.id.linear_layout_mystories_buttons).setVisibility(View.VISIBLE);
 			}
 			catch (IndexOutOfBoundsException e)
 			{
@@ -172,5 +187,11 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 		{
 			return null;
 		}
+	}
+	
+	protected void message(String msg)
+	{
+		TextView textview = (TextView) getView().findViewById(R.id.textview_story);
+		textview.setText(msg);
 	}
 }
