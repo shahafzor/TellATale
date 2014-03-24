@@ -27,5 +27,6 @@
     <string name="imageview_logo">logo image</string>
     <string name="message_loading_stories">Loading your stories</string>
     <string name="message_loading_story">Loading a story</string>
+    <string name="message_sending_story">Sending</string>
 
 </resources>

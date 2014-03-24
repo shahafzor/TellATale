@@ -1,7 +1,8 @@
 package com.moti.tellatale;
 
 import android.app.Activity;
-import android.app.Dialog;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -61,8 +62,7 @@ public abstract class StoryFragment extends Fragment implements IConnectionUser
 		}
 		else
 		{
-			// TODO
-			//message(":-(  There is no internet connection");
+			message(":-(  There is no internet connection");
 		}
 	}
 	
@@ -103,10 +103,15 @@ public abstract class StoryFragment extends Fragment implements IConnectionUser
 	
 	protected void message(String msg)
 	{
-		Dialog dialog = new Dialog(ParentActivity);
+		AlertDialog.Builder dialog = new AlertDialog.Builder(ParentActivity);
 		TextView text = new TextView(ParentActivity);
 		text.setText(msg);
-		dialog.setContentView(text);
+		dialog.setMessage(msg);
+		dialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	                dialog.cancel();
+	           }});
 		dialog.show();
+		ParentActivity.home();
 	}
 }

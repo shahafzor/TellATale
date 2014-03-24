@@ -113,7 +113,7 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 			return;
 		}
 		
-		getView().findViewById(R.id.layout_loading).setVisibility(View.GONE);
+		getView().findViewById(R.id.layout_waiting).setVisibility(View.GONE);
 		getView().findViewById(R.id.layout_main).setVisibility(View.VISIBLE);
 		
 		String lastSegmentText = lastSegment.getText();
@@ -179,31 +179,31 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 			handleReceivedStory(response);
 			break;
 		case HttpConnectionTask.STATUS_RESPONSE_OK:
-			message(":-) Your story has been sent!");
+			message("Your story has been sent!");
 			StorySent = true;
 			clearFragment();
 			break;
 		case HttpConnectionTask.STATUS_ILEGAL_SEGMENT:
-			message(":-( Ilegal story sent");
+			message("Ilegal story sent");
 			clearFragment();
 			break;
 		case HttpConnectionTask.STATUS_NO_STORY_AVAILABLE:
-			message(":-( There is no story available at the momment");
+			message("There is no story available at the momment");
 			break;
 		case HttpConnectionTask.STATUS_ERROR_CREDENTIALS:
-			message(":-( You have a problem with your credentials");
+			message("You have a problem with your credentials");
 			break;
 		case HttpConnectionTask.STATUS_SERVER_ERROR:
-			message(":-( Server Error");
+			message("Server Error");
 			break;
 		case HttpConnectionTask.STATUS_APP_ERROR:
-			message(":-( App Error: " + response);
+			message("App Error: " + response);
 			break;
 		case HttpConnectionTask.STATUS_ERROR_TIMEOUT:
-			message(":-( Timeout Error");
+			message("Timeout Error");
 			break;
 		default:
-			message(":-( What the fuck??? " + response);
+			message("What the fuck??? " + response);
 		}
 	}
 	
@@ -288,14 +288,18 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 			segment = ReceivedStory.createparallelSegment(text, userName, password);
 		}
 		Story story = new Story(segment, ReceivedStory.getName());
-		message("Sending...");
+		
+		getView().findViewById(R.id.layout_waiting).setVisibility(View.VISIBLE);
+		getView().findViewById(R.id.layout_main).setVisibility(View.GONE);
+		((TextView)getView().findViewById(R.id.textview_message)).setText(getString(R.string.message_sending_story));
+		
 		sendStory(story);
 	}
 	
 	public void onClickRejectButton(View button)
 	{
 		clearFragment();
-		getView().findViewById(R.id.layout_loading).setVisibility(View.VISIBLE);
+		getView().findViewById(R.id.layout_waiting).setVisibility(View.VISIBLE);
 		getView().findViewById(R.id.layout_main).setVisibility(View.GONE);
 		getStoryFromServer(REJECT, ReceivedStory.getName());
 	}
@@ -303,7 +307,7 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 	public void onClickReplaceButton(View button)
 	{
 		clearFragment();
-		getView().findViewById(R.id.layout_loading).setVisibility(View.VISIBLE);
+		getView().findViewById(R.id.layout_waiting).setVisibility(View.VISIBLE);
 		getView().findViewById(R.id.layout_main).setVisibility(View.GONE);
 		getStoryFromServer(REPLACE, ReceivedStory.getName());
 	}

@@ -35,15 +35,13 @@ public class MenuFragment extends Fragment
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
-		if (savedInstanceState == null)
-		{
-			SharedPreferences SharedPref = ((MainActivity)getActivity()).getSharedPref();
 
-			int permission = SharedPref.getInt(getString(R.string.pref_key_user_permission), 0);
-			if (permission < 1)
-			{
-				getView().findViewById(R.id.button_new_story).setVisibility(View.GONE);
-			}
+		SharedPreferences SharedPref = ((MainActivity)getActivity()).getSharedPref();
+
+		int permission = SharedPref.getInt(getString(R.string.pref_key_user_permission), 0);
+		if (permission < 1)
+		{
+			getView().findViewById(R.id.button_new_story).setVisibility(View.GONE);
 		}
 	}
 	

@@ -23,6 +23,7 @@ class HttpConnectionTask extends AsyncTask<String, Void, String>
 	public static final int STATUS_LOGIN_OK = 7;
 	public static final int STATUS_ILLEGAL_INPUT = 8;
 	public static final int STATUS_DUPLICATE_USER = 9;
+	public static final int STATUS_NO_PERMISSION = 10;
 	
 	// app error codes
 	public static final int STATUS_APP_ERROR = 100;

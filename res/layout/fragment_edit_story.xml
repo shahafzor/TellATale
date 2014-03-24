@@ -4,7 +4,7 @@
     android:layout_height="match_parent" >
 
     <LinearLayout
-        android:id="@+id/layout_loading"
+        android:id="@+id/layout_waiting"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"

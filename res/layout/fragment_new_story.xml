@@ -10,16 +10,46 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".StoryActivity" >
 
-    <EditText
-        android:id="@+id/edittext_new_story"
+    <LinearLayout
+        android:id="@+id/layout_sending"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/edittext_hint_new_segment" />
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone" >
 
-    <Button
-        android:id="@+id/button_send_story"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_send" />
+        <TextView
+            android:id="@+id/textview_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/message_loading_story"
+            android:textSize="20sp" />
+
+        <ProgressBar
+            android:id="@+id/loading_spinner"
+            style="?android:progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/edittext_new_story"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/edittext_hint_new_segment" />
+
+        <Button
+            android:id="@+id/button_send_story"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_send" />
+    </LinearLayout>
 
 </LinearLayout>

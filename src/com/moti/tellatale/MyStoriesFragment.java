@@ -188,10 +188,4 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 			return null;
 		}
 	}
-	
-	protected void message(String msg)
-	{
-		TextView textview = (TextView) getView().findViewById(R.id.textview_story);
-		textview.setText(msg);
-	}
 }

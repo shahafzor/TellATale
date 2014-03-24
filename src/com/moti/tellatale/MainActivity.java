@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -37,7 +38,7 @@ public class MainActivity extends FragmentActivity
 		{
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 			{
-				getActionBar().hide();
+				//getActionBar().hide();
 			}
 
 			// Set the activity layout
@@ -92,6 +93,13 @@ public class MainActivity extends FragmentActivity
 		b.setEnabled(true);
 		b = (Button)findViewById(R.id.button_new_story);
 		b.setEnabled(true);
+	}
+	
+	public void home()
+	{
+		enableButtons();
+		Fragment fragment = new EmptyFragment();
+		getSupportFragmentManager().beginTransaction().replace(R.id.frame_main, fragment).commit();
 	}
 	
 	public void onClickMenuButton(View button)

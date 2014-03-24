@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class NewStoryFragment extends StoryFragment implements View.OnClickListener
 {
@@ -82,7 +83,11 @@ public class NewStoryFragment extends StoryFragment implements View.OnClickListe
 		storySegment.setPassword(password);
 		
 		Story story = new Story(storySegment);
-		message("Sending...");
+		
+		getView().findViewById(R.id.layout_sending).setVisibility(View.VISIBLE);
+		getView().findViewById(R.id.layout_main).setVisibility(View.GONE);
+		((TextView)getView().findViewById(R.id.textview_message)).setText(getString(R.string.message_sending_story));
+		
 		sendStory(story);
 	}
 
@@ -93,19 +98,22 @@ public class NewStoryFragment extends StoryFragment implements View.OnClickListe
 		{
 		case HttpConnectionTask.STATUS_RESPONSE_OK:
 			EdittextNewStory.setText("");
-			message(":-) Your story has been sent!");
+			message("Your story has been sent!");
 			break;
 		case HttpConnectionTask.STATUS_SERVER_ERROR:
-			message(":-( Server Error");
+			message("Server Error");
 			break;
 		case HttpConnectionTask.STATUS_APP_ERROR:
-			message(":-( App Error" + response);
+			message("App Error " + response);
+			break;
+		case HttpConnectionTask.STATUS_NO_PERMISSION:
+			message("Action not authorized " + response);
 			break;
 		case HttpConnectionTask.STATUS_ERROR_TIMEOUT:
-			message(":-( Timeout Error");
+			message("Timeout Error");
 			break;
 		default:
-			message("Something..." + response);
+			message("Something... " + response);
 		}
 	}
 
