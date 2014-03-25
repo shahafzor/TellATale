@@ -3,17 +3,20 @@
 
     <string name="app_name">TellATale</string>
     <string name="title_activity_login">Login</string>
-    <string name="title_new_user"><u>New User</u></string>
+    <string name="title_new_user">New Account</string>
+    <string name="button_facebook_signup">Sign in using facebook</string>
     <string name="action_settings">Settings</string>
     <string name="button_get_story">Get a Story</string>
     <string name="button_new_story">New Story</string>
     <string name="button_logout">Logout</string>
+    <string name="button_sign_in">Sign in</string>
+    <string name="button_add_account">Add acount</string>
     <string name="button_send">Send</string>
     <string name="button_reject_story">Reject</string>
     <string name="button_my_stories">My Stories</string>
     <string name="button_replace_story">Replace</string>
-    <string name="button_next">-&gt;</string>
-    <string name="button_prev">&lt;-</string>
+    <string name="button_next">&gt;</string>
+    <string name="button_prev">&lt;</string>
     <string name="edittext_hint_story">Type your story</string>
     <string name="edittext_hint_new_segment">Begin a story</string>
     <string name="pref_file_name">com.moti.tellatale.SharedPreference</string>
@@ -28,5 +31,6 @@
     <string name="message_loading_stories">Loading your stories</string>
     <string name="message_loading_story">Loading a story</string>
     <string name="message_sending_story">Sending</string>
+    <string name="message_wait">Please wait</string>
 
 </resources>

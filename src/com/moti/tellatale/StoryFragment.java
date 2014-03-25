@@ -8,7 +8,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.widget.TextView;
 //import android.app.Fragment;
 
 public abstract class StoryFragment extends Fragment implements IConnectionUser
@@ -104,8 +103,6 @@ public abstract class StoryFragment extends Fragment implements IConnectionUser
 	protected void message(String msg)
 	{
 		AlertDialog.Builder dialog = new AlertDialog.Builder(ParentActivity);
-		TextView text = new TextView(ParentActivity);
-		text.setText(msg);
 		dialog.setMessage(msg);
 		dialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
 	           public void onClick(DialogInterface dialog, int id) {

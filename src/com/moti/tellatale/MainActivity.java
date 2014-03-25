@@ -38,7 +38,7 @@ public class MainActivity extends FragmentActivity
 		{
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 			{
-				//getActionBar().hide();
+				getActionBar().hide();
 			}
 
 			// Set the activity layout

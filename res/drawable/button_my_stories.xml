@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:drawable="@drawable/my_stories_pressed" android:state_pressed="true"/> <!-- pressed -->
-    <item android:drawable="@drawable/my_stories_inactive" android:state_enabled="false"/> <!-- focused -->
+    <item android:drawable="@drawable/my_stories_inactive_frame" android:state_enabled="false"/> <!-- focused -->
     <item android:drawable="@drawable/my_stories"/> <!-- default -->
 
 </selector>

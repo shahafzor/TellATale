@@ -120,7 +120,6 @@ public class MyStoriesFragment extends StoryFragment implements View.OnClickList
 			{
 				Story story = Stories.get(CurrentIndex);
 				StoryTextView.setText(story.getText());
-				getView().findViewById(R.id.linear_layout_mystories_buttons).setVisibility(View.VISIBLE);
 			}
 			catch (IndexOutOfBoundsException e)
 			{
