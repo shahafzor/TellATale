@@ -77,41 +77,52 @@
             </LinearLayout>
         </ScrollView>
 
-        <EditText
-            android:id="@+id/edittext_add_segment"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/edittext_hint_story"
-            android:paddingTop="@dimen/activity_vertical_margin" />
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp" >
+
+            <Button
+                android:id="@+id/button_replace_story"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/story_replace" />
+
+            <Button
+                android:id="@+id/button_reject_story"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/story_reject" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:layout_gravity="bottom"
+            android:background="#80ffffff"
             android:orientation="horizontal" >
 
-            <Button
-                android:id="@+id/button_replace_story"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/story_replace" />
+            <EditText
+                android:id="@+id/edittext_add_segment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:hint="@string/edittext_hint_story" />
 
             <Button
                 android:id="@+id/button_send_story"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/basic_button"
-                android:text="@string/button_send"
-                android:textColor="@android:color/white" />
-
-            <Button
-                android:id="@+id/button_reject_story"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/story_reject" />
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/icon_arrow_right" />
         </LinearLayout>
     </LinearLayout>
 

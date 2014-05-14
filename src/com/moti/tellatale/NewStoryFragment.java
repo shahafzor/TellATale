@@ -33,7 +33,7 @@ public class NewStoryFragment extends StoryFragment implements View.OnClickListe
 		{
 			EdittextNewStory = (EditText)rootView.findViewById(R.id.edittext_new_story);
 			EdittextNewStory.setFilters(new InputFilter[] {new InputFilter.LengthFilter(MAX_SEGMENT_LENGTH)});
-			Button button = (Button)rootView.findViewById(R.id.button_send_story);
+			Button button = (Button)rootView.findViewById(R.id.button_send_new_story);
 			button.setOnClickListener(this);
 		}
 
@@ -122,7 +122,7 @@ public class NewStoryFragment extends StoryFragment implements View.OnClickListe
 	{
 		switch (v.getId())
 		{
-		case R.id.button_send_story:
+		case R.id.button_send_new_story:
 			onClickSendButton(v);
 			break;
 		}
