@@ -32,5 +32,6 @@
     <string name="message_loading_story">Loading a story</string>
     <string name="message_sending_story">Sending</string>
     <string name="message_wait">Please wait</string>
+    <string name="app_id">620619604659929</string>
 
 </resources>

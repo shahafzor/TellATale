@@ -3,7 +3,6 @@ package com.moti.tellatale;
 //import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -28,32 +27,25 @@ public class MainActivity extends FragmentActivity
 		super.onCreate(savedInstanceState);
 		Log.d("sha", "MainActivity/onCreate");
 		SharedPref = getSharedPreferences(getString(R.string.pref_file_name), MODE_PRIVATE);
-		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
-		if (userName == "")
+		
+		if (!isLoggedin())
 		{
 			startLoginActivity();
 			finish();
+			return;
 		}
-		else
+		
+		// Set the activity layout
+		setContentView(R.layout.activity_main);
+
+		if (savedInstanceState == null)
 		{
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-			{
-				getActionBar().hide();
-			}
-
-			// Set the activity layout
-			setContentView(R.layout.activity_main);
-
-			if (savedInstanceState == null)
-			{
-				// Add the menu fragment
-				MenuFragment fragment = new MenuFragment();
-				getSupportFragmentManager().beginTransaction().add(R.id.frame_menu, fragment).commit();
-				
-				EmptyFragment fragment2 = new EmptyFragment();
-				getSupportFragmentManager().beginTransaction().add(R.id.frame_main, fragment2).commit();
-				//getFragmentManager().beginTransaction().add(R.id.frame_menu, fragment).commit();
-			}
+			// Add the menu fragment
+			MenuFragment fragment = new MenuFragment();
+			getSupportFragmentManager().beginTransaction().add(R.id.frame_menu, fragment).commit();
+			
+			EmptyFragment fragment2 = new EmptyFragment();
+			getSupportFragmentManager().beginTransaction().add(R.id.frame_main, fragment2).commit();
 		}
 	}
 
@@ -137,5 +129,11 @@ public class MainActivity extends FragmentActivity
 	private void clearFiles()
 	{
 		SharedPref.edit().clear().commit();
+	}
+	
+	private boolean isLoggedin()
+	{
+		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
+		return userName != "";
 	}
 }

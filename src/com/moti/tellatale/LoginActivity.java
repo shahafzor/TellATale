@@ -17,6 +17,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.facebook.Request;
+import com.facebook.Request.GraphUserCallback;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.Session.StatusCallback;
+import com.facebook.SessionState;
+import com.facebook.model.GraphUser;
+
 public class LoginActivity extends Activity implements IConnectionUser
 {
 	private enum Action {login, newUser}
@@ -34,6 +42,12 @@ public class LoginActivity extends Activity implements IConnectionUser
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		Session facebookSession = Session.getActiveSession();
+		if (facebookSession != null)
+		{
+			Log.d("sha", "log out facebook");
+			facebookSession.close();
+		}
 		SharedPref = getSharedPreferences(getString(R.string.pref_file_name), MODE_PRIVATE);
 		setContentView(R.layout.activity_login);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
@@ -62,7 +76,6 @@ public class LoginActivity extends Activity implements IConnectionUser
 		if (CurrentAction == Action.login)
 		{
 			CurrentAction = Action.newUser;
-			Url = ServerUrls.NEW_USER_URL;
 			link.setText(getString(R.string.title_activity_login));
 			setTitle(getString(R.string.title_new_user));
 			button.setText(getString(R.string.button_add_account));
@@ -70,7 +83,6 @@ public class LoginActivity extends Activity implements IConnectionUser
 		else
 		{
 			CurrentAction = Action.login;
-			Url = ServerUrls.LOGIN_URL;
 			link.setText(getString(R.string.title_new_user));
 			setTitle(getString(R.string.title_activity_login));
 			button.setText(getString(R.string.button_sign_in));
@@ -95,18 +107,28 @@ public class LoginActivity extends Activity implements IConnectionUser
 			inputIsValid = false;
 			PasswordErrorTextView.setText(getString(R.string.error_msg_password));
 		}
+		
+		if (CurrentAction == Action.login)
+		{
+			Url = ServerUrls.LOGIN_URL;
+		}
+		else
+		{
+			Url = ServerUrls.NEW_USER_URL;
+		}
 
 		if (inputIsValid)
 		{
 			findViewById(R.id.layout_sending).setVisibility(View.VISIBLE);
 			findViewById(R.id.layout_main).setVisibility(View.GONE);
 			sendHttpLoginRequest();
-			
 		}
 	}
 
 	public void onClickFacebookSignUp(View v)
-	{}
+	{
+		Session.openActiveSession(this, true, new SCB());
+	}
 
 	public void sendHttpLoginRequest()
 	{
@@ -127,14 +149,13 @@ public class LoginActivity extends Activity implements IConnectionUser
 	private void login(String permissionStr)
 	{
 		int permission = 0;
-		if (CurrentAction == Action.login)
+		
+		try
 		{
-			try
-			{
-				permission = Integer.parseInt(permissionStr);
-			}
-			catch (NumberFormatException e){}
+			permission = Integer.parseInt(permissionStr);
 		}
+		catch (NumberFormatException e){}
+		
 		Editor editor = SharedPref.edit();
 		editor.putString(getString(R.string.pref_key_user_name), Username);
 		editor.putString(getString(R.string.pref_key_user_password), Password);
@@ -188,5 +209,54 @@ public class LoginActivity extends Activity implements IConnectionUser
 				dialog.cancel();
 			}});
 		dialog.show();
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+	}
+	
+	class SCB implements StatusCallback
+	{
+		// callback when session changes state
+		@Override
+		public void call(Session session, SessionState state, Exception exception)
+		{
+			Log.d("sha", "call():" + state.name());
+			if (session.isOpened())
+			{
+				Log.d("sha", "call(): session opened");
+				// make request to the /me API
+				Request.newMeRequest(session, new GCB()).executeAsync();
+			}
+		}
+	}
+	
+	class GCB implements GraphUserCallback
+	{
+		// callback after Graph API response with user object
+		@Override
+		public void onCompleted(GraphUser user, Response response)
+		{
+			if (user != null)
+			{
+				Username = user.getFirstName() + user.getLastName();
+				Password = user.getId();
+				Log.d("sha", Username + ", " + Password);
+				Url = ServerUrls.FACE_LOGIN_URL;
+				findViewById(R.id.layout_sending).setVisibility(View.VISIBLE);
+				findViewById(R.id.layout_main).setVisibility(View.GONE);
+				sendHttpLoginRequest();
+				//ProfilePictureView p = new ProfilePictureView(activity);
+				//p.setProfileId(user.getId());
+				//setContentView(p);
+			}
+			else
+			{
+				Log.d("sha", response.toString());
+			}
+		}
 	}
 }
