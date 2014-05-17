@@ -32,6 +32,7 @@ public class LoginActivity extends Activity implements IConnectionUser
 	private SharedPreferences SharedPref;
 	private String Username;
 	private String Password;
+	private String FacebookId = null;
 	private TextView UsernameErrorTextView;
 	private TextView PasswordErrorTextView;
 	private Action CurrentAction = Action.login;
@@ -160,6 +161,10 @@ public class LoginActivity extends Activity implements IConnectionUser
 		editor.putString(getString(R.string.pref_key_user_name), Username);
 		editor.putString(getString(R.string.pref_key_user_password), Password);
 		editor.putInt(getString(R.string.pref_key_user_permission), permission);
+		if (FacebookId != null)
+		{
+			editor.putString(getString(R.string.pref_key_user_facebook_id), FacebookId);
+		}
 		editor.commit();
 		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
@@ -244,6 +249,7 @@ public class LoginActivity extends Activity implements IConnectionUser
 			{
 				Username = user.getFirstName() + user.getLastName();
 				Password = user.getId();
+				FacebookId = user.getId();
 				Log.d("sha", Username + ", " + Password);
 				Url = ServerUrls.FACE_LOGIN_URL;
 				findViewById(R.id.layout_sending).setVisibility(View.VISIBLE);

@@ -23,6 +23,7 @@
     <string name="pref_key_user_name">UserName</string>
     <string name="pref_key_user_password">Password</string>
     <string name="pref_key_user_permission">Permission</string>
+    <string name="pref_key_user_facebook_id">Facebook</string>
     <string name="edittext_hint_login_username">username</string>
     <string name="edittext_hint_login_password">password</string>
     <string name="error_msg_password">6&#8211;12 letters and numbers</string>
@@ -33,5 +34,6 @@
     <string name="message_sending_story">Sending</string>
     <string name="message_wait">Please wait</string>
     <string name="app_id">620619604659929</string>
+    
 
 </resources>

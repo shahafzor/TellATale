@@ -260,6 +260,13 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 		String userName = SharedPref.getString(getString(R.string.pref_key_user_name), "");
 		String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
 		String credentials = "username=" + userName + "&password=" + password;
+		
+		String facebookId = SharedPref.getString(getString(R.string.pref_key_user_facebook_id), "");
+		if (facebookId != "")
+		{
+			credentials += "&facebookId=" + facebookId;
+		}
+		
 		url += "?" + credentials + "&action=" + action;
 		if (storyName != null)
 		{
@@ -280,7 +287,7 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 		String password = SharedPref.getString(getString(R.string.pref_key_user_password), "");
 		String text = EditSegment.getText().toString();
 		if (NewSegment)
-		{	
+		{
 			segment = ReceivedStory.createNewSegment(text, userName, password);
 		}
 		else
