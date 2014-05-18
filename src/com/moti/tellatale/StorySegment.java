@@ -11,7 +11,6 @@ public class StorySegment
 	private String Text;
 	private int Dislike = 0;
 	private String UserName;
-	private String Password;
 	private boolean IsParallel = false;
 	private boolean Dropped = false;
 	private boolean NeedDrop = false;
@@ -50,16 +49,6 @@ public class StorySegment
 	public void setSeqNumber(int number)
 	{
 		SeqNumber = number;
-	}
-	
-	public void setPassword(String password)
-	{
-		Password = password;
-	}
-	
-	public String getPassword()
-	{
-		return Password;
 	}
 	
 	public int getVersion()
@@ -165,12 +154,7 @@ public class StorySegment
     	serializer.startTag("", "user_name");
     	serializer.text(getUserName());
     	serializer.endTag("", "user_name");
-    	if (getPassword() != null)
-    	{
-    		serializer.startTag("", "password");
-    		serializer.text(getPassword());
-    		serializer.endTag("", "password");
-    	}
+    	
     	if (isParallel())
     	{
     		serializer.startTag("", "parallel");

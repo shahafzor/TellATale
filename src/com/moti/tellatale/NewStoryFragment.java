@@ -80,7 +80,6 @@ public class NewStoryFragment extends StoryFragment implements View.OnClickListe
 		String storyString = EdittextNewStory.getText().toString();
 		
 		StorySegment storySegment = new StorySegment(storyString, userName);
-		storySegment.setPassword(password);
 		
 		Story story = new Story(storySegment);
 		
@@ -88,7 +87,14 @@ public class NewStoryFragment extends StoryFragment implements View.OnClickListe
 		getView().findViewById(R.id.layout_main).setVisibility(View.GONE);
 		((TextView)getView().findViewById(R.id.textview_message)).setText(getString(R.string.message_sending_story));
 		
-		sendStory(story);
+		String credentials = "username=" + userName + "&password=" + password;
+		
+		String facebookId = SharedPref.getString(getString(R.string.pref_key_user_facebook_id), "");
+		if (facebookId != "")
+		{
+			credentials += "&facebookId=" + facebookId;
+		}
+		sendStory(story, credentials);
 	}
 
 	@Override

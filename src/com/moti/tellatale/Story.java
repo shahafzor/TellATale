@@ -152,7 +152,7 @@ public class Story
 		return getStorySegment(getStorySegmentCount() - 1);
 	}
 	
-	StorySegment createNewSegment(String text, String username, String password)
+	StorySegment createNewSegment(String text, String username)
 	{
 		StorySegment newSegment = null;
 		StorySegment segment = getCurrentSegment();
@@ -161,7 +161,6 @@ public class Story
 			int seqNumber = segment.getNextSeqNumber();
 			newSegment = new StorySegment(text, seqNumber, username);
 			newSegment.setVersion(segment.getVersion());
-			newSegment.setPassword(password);
 			
 			// if the last segment had more than one version, the ones that were
 			// not chosen will be dropped
@@ -173,7 +172,7 @@ public class Story
 		return newSegment;
 	}
 	
-	StorySegment createparallelSegment(String text, String username, String password)
+	StorySegment createparallelSegment(String text, String username)
 	{
 		StorySegment newSegment = null;
 		StorySegment segment = getLastSegment();
@@ -182,7 +181,6 @@ public class Story
 			int seqNumber = segment.getSeqNumber();
 			newSegment = new StorySegment(text, seqNumber, username);
 			newSegment.setVersion(segment.getNextVersion());
-			newSegment.setPassword(password);
 			newSegment.setIsParallel();
 		}
 		return newSegment;

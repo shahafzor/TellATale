@@ -288,11 +288,11 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 		String text = EditSegment.getText().toString();
 		if (NewSegment)
 		{
-			segment = ReceivedStory.createNewSegment(text, userName, password);
+			segment = ReceivedStory.createNewSegment(text, userName);
 		}
 		else
 		{
-			segment = ReceivedStory.createparallelSegment(text, userName, password);
+			segment = ReceivedStory.createparallelSegment(text, userName);
 		}
 		Story story = new Story(segment, ReceivedStory.getName());
 		
@@ -300,7 +300,14 @@ public class EditStoryFragment extends StoryFragment implements View.OnClickList
 		getView().findViewById(R.id.layout_main).setVisibility(View.GONE);
 		((TextView)getView().findViewById(R.id.textview_message)).setText(getString(R.string.message_sending_story));
 		
-		sendStory(story);
+		String credentials = "username=" + userName + "&password=" + password;
+		
+		String facebookId = SharedPref.getString(getString(R.string.pref_key_user_facebook_id), "");
+		if (facebookId != "")
+		{
+			credentials += "&facebookId=" + facebookId;
+		}
+		sendStory(story, credentials);
 	}
 	
 	public void onClickRejectButton(View button)

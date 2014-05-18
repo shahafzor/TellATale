@@ -65,10 +65,10 @@ public abstract class StoryFragment extends Fragment implements IConnectionUser
 		}
 	}
 	
-	protected void sendStory(Story story)
+	protected void sendStory(Story story, String credentials)
 	{
 		String xmlFile = story.toXml();
-		String url = ServerUrls.SERVER_URL + ServerUrls.SERVER_RECEIVE_URL;
+		String url = ServerUrls.SERVER_URL + ServerUrls.SERVER_RECEIVE_URL + "?" + credentials;
 		sendHttp(url, xmlFile);
 	}
 	
